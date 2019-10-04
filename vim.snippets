@@ -1,0 +1,75 @@
+# append
+snippet ap "append(slice, value)"
+append(${1:slice}, ${0:value})
+endsnippet
+
+# append assignment
+snippet ap= "a = append(a, value)"
+${1:slice} = append($1, ${0:value})
+endsnippet
+
+# error multiple return
+snippet errn, "Error return with two return values" !b
+if err != nil {
+	return ${1:nil}, ${2:err}
+}
+${0}
+endsnippet
+
+# error handle
+snippet errh "Error handle and return" !b
+if err != nil {
+	${1}
+	return
+}
+${0}
+endsnippet
+
+# error multiple return
+snippet errn, "Error return with two return values" !b
+if err != nil {
+	return ${1:nil}, ${2:err}
+}
+${0}
+endsnippet
+
+
+# Fmt Printf debug
+snippet ff "fmt.Printf(...)"
+fmt.Printf("${1:${VISUAL}} = %+v\n", $1)
+endsnippet
+
+# Fmt Println debug
+snippet fn "fmt.Println(...)"
+fmt.Println("${1:${VISUAL}}")
+endsnippet
+
+# Fmt Errorf debug
+snippet fe "fmt.Errorf(...)"
+fmt.Errorf("${1:${VISUAL}}")
+endsnippet
+
+# log printf
+snippet lf "log.Printf(...)"
+log.Printf("${1:${VISUAL}} = %+v\n", $1)
+endsnippet
+
+# log println
+snippet ln "log.Println(...)"
+log.Println("${1:${VISUAL}}")
+endsnippet
+
+# json field tag
+snippet json "\`json:key\`"
+\`json:"${1:`!v  go#util#snippetcase(matchstr(getline("."), '\w\+'))`}"\`
+endsnippet
+
+# json camelcase field tag
+snippet jsonc "\`jsonc:key\`"
+\`json:"${1:`!v  go#util#camelcase(matchstr(getline("."), '\w\+'))`}"\`
+endsnippet
+
+# yaml field tag
+snippet yaml "\`yaml:key\`"
+\`yaml:"${1:`!v  go#util#snippetcase(matchstr(getline("."), '\w\+'))`}"\`
+endsnippet

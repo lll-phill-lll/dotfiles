@@ -1,0 +1,126 @@
+set nocompatible              " be iMproved, required
+set number                    " numbers in the left
+set hlsearch                  " highlight search
+set incsearch                 " increment search
+syntax on                     " enable syntax highlight
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+""Bundle 'matze/vim-move'
+hi SpellBad ctermfg=124 ctermbg=235 guifg=#yyyyyy guibg=#zzzzzz
+hi SpellCap ctermfg=124 ctermbg=235 guifg=#yyyyyy guibg=#zzzzzz
+
+Plugin 'scrooloose/nerdtree'
+" neocomplete settings
+Plugin 'scrooloose/syntastic'
+Plugin 'fatih/vim-go'
+Plugin 'tpope/vim-surround'
+Plugin 'davidhalter/jedi-vim'
+Plugin 'uguu-org/vim-matrix-screensaver'
+Plugin 'johngrib/vim-game-snake'
+Plugin 'w0rp/ale'
+
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+
+autocmd vimenter * NERDTree 
+
+
+let g:UltiSnipsEditSplit="vertical"
+
+" basic settings
+set shiftwidth=4
+set ai
+set cin
+set smarttab
+set expandtab
+set smartindent
+inoremap [ []<esc>i
+inoremap ( ()<esc>i
+inoremap { {}<esc>i
+inoremap " ""<esc>i
+inoremap ' ''<esc>i
+
+
+set clipboard=unnamedplus
+
+autocmd filetype cpp nnoremap <C-c> :w <bar> !clear && g++ -std=gnu++14 -O2 % -o %:p:h/%:t:r.exe && ./%:r.exe<CR>
+
+autocmd filetype c nnoremap <C-c> :w <bar> !gcc -lm -pthread -lm % -o %:p:h/%:t:r.out && ./%:r.out<CR>
+
+autocmd filetype java nnoremap <C-c> :w <bar> !javac % && java -enableassertions %:p <CR>
+autocmd filetype python nnoremap <C-c> :w <bar> !python % <CR>
+autocmd filetype haskell nnoremap <C-c> :w <bar> !ghci % <CR>
+autocmd filetype perl nnoremap <C-c> :w <bar> !perl % <CR>
+autocmd filetype go nnoremap <C-c> :w <bar> !go build % && ./%:p <CR>
+
+
+filetype plugin indent on
+" when indenting with '>', use 4 spaces width
+set shiftwidth=4
+" On pressing tab, insert 4 spaces
+set expandtab
+
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+ " path to directory where library can be found
+ let g:clang_library_path='/usr/lib/llvm-3.8/lib'
+ " or path directly to the library file
+ let g:clang_library_path='/usr/lib64/libclang.so.3.8'
+
+function! RemoveTrailingSpaces()
+   normal! mzHmy
+   execute '%s:\s\+$::ge'
+   normal! 'yzt`z
+endfunction
+
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+
+
+func! WordProcessorMode()
+    setlocal textwidth=80
+    setlocal smartindent
+    setlocal spell spelllang=ru_ru,en_us
+    setlocal noexpandtab
+endfu
+com! WP call WordProcessorMode()
+
+
+" ALE
+" Enable completion where available.
+let g:ale_completion_enabled = 1
+" Set this. Airline will handle the rest.
+let g:airline#extensions#ale#enabled = 1
+
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+
+function! MyBalloonExpr()
+       return system("mueller ". v:beval_text)
+endfunction
+set bexpr=MyBalloonExpr()
+set ballooneval
+set balloondelay=100
+
+set clipboard=unnamed
+
+
+" mappings
+map <C-n> :NERDTreeToggle<CR>
