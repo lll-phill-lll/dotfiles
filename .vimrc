@@ -24,13 +24,6 @@ Plug 'artur-shaik/vim-javacomplete2', {'for': 'java'}
 
 Plug 'ctrlpvim/ctrlp.vim'
 
-if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
- else
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
 " colorschemas
 Plug 'morhetz/gruvbox'
 Plug 'fatih/molokai'
@@ -44,6 +37,7 @@ colorscheme gruvbox
 set background=dark
 set encoding=utf-8
 let g:mapleader=','
+set noswapfile
 
 set relativenumber
 augroup numbertoggle
@@ -60,7 +54,7 @@ set shiftwidth=4
 " On pressing tab, insert 4 spaces
 set number
 set hlsearch	" highlight search results
-set incsearch 	" increment search 
+set incsearch 	" increment search
 
 set tabstop=4
 
@@ -69,7 +63,7 @@ set cin
 set smarttab
 set expandtab
 set smartindent
-syntax on 
+syntax on
 inoremap [ []<esc>i
 inoremap ( ()<esc>i
 inoremap { {}<esc>i
@@ -139,10 +133,10 @@ au FileType go nmap <Leader>r <Plug>(go-run)
 au FileType go nmap <Leader>b <Plug>(go-build)
 au FileType go nmap <Leader>t <Plug>(go-test)
 au FileType go nmap gd <Plug>(go-def-tab)
-" Run goimports along gofmt on each save     
-let g:go_fmt_command = "goimports"    
-" Automatically get signature/type info for object under cursor     
-let g:go_auto_type_info = 1           
+" Run goimports along gofmt on each save
+let g:go_fmt_command = "goimports"
+" Automatically get signature/type info for object under cursor
+let g:go_auto_type_info = 1
 
 " from https://gist.github.com/tyru/984296
 " Substitute a:from => a:to by string.
@@ -208,10 +202,72 @@ let g:tagbar_type_go = {
 	\ 'ctagsargs' : '-sort -silent'
 \ }
 
+" comments
+autocmd filetype cpp vnoremap <C-l> :s/\%V\(_.*\)\%V/\/\* \1 \*\// <CR>
+autocmd filetype xml vnoremap <C-l> :s/\%V\(.*\)\%V/<!-- \1 -->/  <CR>
 
+
+function! s:ag_to_qf(line)
+  let parts = split(a:line, ':')
+  return {'filename': parts[0], 'lnum': parts[1], 'col': parts[2],
+        \ 'text': join(parts[3:], ':')}
+endfunction
+
+function! s:ag_handler(lines)
+  if len(a:lines) < 2 | return | endif
+
+  let cmd = get({'ctrl-x': 'split',
+               \ 'ctrl-v': 'vertical split',
+               \ 'ctrl-t': 'tabe'}, a:lines[0], 'e')
+  let list = map(a:lines[1:], 's:ag_to_qf(v:val)')
+
+  let first = list[0]
+  execute cmd escape(first.filename, ' %#\')
+  execute first.lnum
+  execute 'normal!' first.col.'|zz'
+
+  if len(list) > 1
+    call setqflist(list)
+    copen
+    wincmd p
+  endif
+endfunction
+
+command! -nargs=* Ag call fzf#run({
+\ 'source':  printf('ag --nogroup --column --color "%s"',
+\                   escape(empty(<q-args>) ? '^(?=.)' : <q-args>, '"\')),
+\ 'sink*':    function('<sid>ag_handler'),
+\ 'options': '--ansi --expect=ctrl-t,ctrl-v,ctrl-x --delimiter : --nth 4.. '.
+\            '--multi --bind=ctrl-a:select-all,ctrl-d:deselect-all '.
+\            '--color hl:68,hl+:110',
+\ 'down':    '50%'
+\ })
 "let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 
+function! MultiLineSubstitute() abort
+  normal!gvy
+  let expression = substitute(@0, "\<C-J>", '\\n', 'g')
+  execute '%s,'.expression.','.input("Replacement: ")
+endfunction
 
+vnoremap <F1> :<C-U>call MultiLineSubstitute()<CR>
+
+function OpenYMusic()
+     :silent !osascript -e 'tell application "Firefox" to open location "http://music.yandex.ru"'
+     :redraw!
+endfunction
+
+command YMusic call OpenYMusic()
+
+function YMusicNext()
+     :silent !osascript -e 'tell application "Firefox" \n repeat with w in (every window) \n repeat with t in (every tab whose URL contains "music.yandex.ru") of w \n tell t to do JavaScript "document.querySelector(".player-controls__btn_prev").click();"'
+     :redraw!
+endfunction
+
+command YNext call YMusicNext()
+
+:command Q q
+:command W w
 
 
 " Instructions:
@@ -232,7 +288,7 @@ let g:tagbar_type_go = {
 " :GoCallers - vim-go - get all possible callers of given function
 " :GoImpl + interface_name - vim-go - create implementation of interface
 " :GoPlay - vim-go - open in go playground
-" :%retab - vim - Change tabs 
+" :%retab - vim - Change tabs
 " https://vim.fandom.com/wiki/Using_marks
 " snippets in go.snippets
 " install gotags https://github.com/jstemmer/gotags
