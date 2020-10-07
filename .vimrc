@@ -11,6 +11,7 @@ colorscheme gruvbox
 
 set background=dark
 set encoding=utf-8
+" symbol to start special commands
 let g:mapleader=','
 set noswapfile
 
@@ -68,6 +69,18 @@ autocmd filetype perl nnoremap <C-c> :w <bar> !perl % <CR>
 autocmd filetype go nnoremap <C-c> :w <bar> !go build % && ./%:p <CR>
 
 
+" Commenting blocks of code.
+augroup commenting_blocks_of_code
+  autocmd!
+  autocmd FileType c,cpp,java,scala,go let b:comment_leader = '// '
+  autocmd FileType sh,ruby,python      let b:comment_leader = '# '
+  autocmd FileType conf,fstab          let b:comment_leader = '# '
+  autocmd FileType tex                 let b:comment_leader = '% '
+  autocmd FileType mail                let b:comment_leader = '> '
+  autocmd FileType vim                 let b:comment_leader = '" '
+augroup END
+noremap <silent> ,cc :<C-B>silent <C-E>s/^/<C-R>=escape(b:comment_leader,'\/')<CR>/<CR>:nohlsearch<CR>
+noremap <silent> ,cu :<C-B>silent <C-E>s/^\V<C-R>=escape(b:comment_leader,'\/')<CR>//e<CR>:nohlsearch<CR>
 
 
 autocmd filetype cpp vnoremap <C-l> :s/\%V\(_.*\)\%V/\/\* \1 \*\// <CR>
@@ -83,9 +96,14 @@ command YNext call YMusicNext()
 
 
 " Instructions:
-" :GoImports - vim-go - autoImports and deletes imports
 " gS - splitJoin - split struct declaration
 " gJ - splitJoin - join struct declaratin
+" :%retab - vim - Change tabs
+" ,cc - vim - comment line
+" ,cu - vim - uncomment line
+" <C-c> - vim - compile
+"
+" :GoImports - vim-go - autoImports and deletes imports
 " :UltiSnipsEdit - ultisnips - open file with snippet scripts
 " gd - vim-go - go to declaration
 " ctrl+t - vim-go - go back from declaration
@@ -100,7 +118,6 @@ command YNext call YMusicNext()
 " :GoCallers - vim-go - get all possible callers of given function
 " :GoImpl + interface_name - vim-go - create implementation of interface
 " :GoPlay - vim-go - open in go playground
-" :%retab - vim - Change tabs
 " https://vim.fandom.com/wiki/Using_marks
 " snippets in go.snippets
 " install gotags https://github.com/jstemmer/gotags
