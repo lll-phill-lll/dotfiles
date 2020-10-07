@@ -41,6 +41,7 @@ set smartindent
 syntax on
 
 inoremap {<CR> {<CR>}<esc>ko<tab>
+autocmd filetype cpp,c,java,go,python,haskell,perl inoremap {<CR> {<CR>}<esc>ko
 inoremap [<CR> []<esc>i
 inoremap (<CR> ()<esc>i
 inoremap "<CR> ""<esc>i
