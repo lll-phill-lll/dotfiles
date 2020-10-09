@@ -48,7 +48,7 @@ set expandtab
 set smartindent
 syntax on
 
-" macsuck
+" #macsuck
 if has('mac')
     inoremap {<CR> {<CR>}<esc>ko
 else
@@ -70,11 +70,11 @@ let g:netrw_winsize = 10 " size of split
 
 " set clipboard=unnamedplus
 
-autocmd filetype cpp nnoremap <C-c> :w <bar> !clear && g++ -std=gnu++14 -O0 % -o %:h/%:t:r.exe && ./%:r.exe<CR>
+autocmd filetype cpp nnoremap <C-c> :w <bar> !clear && g++ -std=gnu++14 -O0 % -o %:h/%:t:r.lol && ./%:r.lol<CR>
 " mb add :p before :h/%:t...
 
-autocmd filetype c nnoremap <C-c> :w <bar> !clear && gcc -pthread -lm % -o %:p:h/%:t:r.exe && ./%:r.exe<CR>
-autocmd filetype c nnoremap <C-k> :w <bar> !clear && gcc -c  % && gcc %:h/%:t:r.o -lglpk -lgmp -lm -o %:h/%:t:r.exe && ./%:r.exe<CR>
+autocmd filetype c nnoremap <C-c> :w <bar> !clear && gcc -pthread -lm % -o %:p:h/%:t:r.lol && ./%:r.lol<CR>
+autocmd filetype c nnoremap <C-k> :w <bar> !clear && gcc -c  % && gcc %:h/%:t:r.o -lglpk -lgmp -lm -o %:h/%:t:r.lol && ./%:r.lol<CR>
 
 autocmd filetype java nnoremap <C-c> :w <bar> !javac % && java -enableassertions %:p <CR>
 autocmd filetype python nnoremap <C-c> :w <bar> !python3 % <CR>
@@ -101,13 +101,8 @@ autocmd filetype cpp vnoremap <C-l> :s/\%V\(_.*\)\%V/\/\* \1 \*\// <CR>
 autocmd filetype xml vnoremap <C-l> :s/\%V\(.*\)\%V/<!-- \1 -->/  <CR>
 
 
-"let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
-
-command YNext call YMusicNext()
-
 :command Q q
 :command W w
-
 
 " Snippets:
 " json-go
@@ -122,13 +117,12 @@ nnoremap <leader>erng :-1read $HOME/.vim/snippets/noerror-go<CR>j$a
 " brew tap universal-ctags/universal-ctags
 " brew install --HEAD universal-ctags
 " https://docs.ctags.io/en/latest/osx.html#building-with-homebrew
-" macsuck
+" #macsuck
 if has('mac')
     :command! MakeTags !`brew --prefix`/bin/ctags -R .
 else
     :command! MakeTags !ctags -R .
 endif
-
 
 " Instructions:
 " gR - vim - vreplace
