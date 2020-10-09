@@ -1,3 +1,4 @@
+" required vim with python3 support
 call plug#begin('~/.vim/plugged')
 " colorschemas
 Plug 'morhetz/gruvbox'
@@ -47,6 +48,7 @@ set expandtab
 set smartindent
 syntax on
 
+" macsuck
 if has('mac')
     inoremap {<CR> {<CR>}<esc>ko
 else
@@ -58,6 +60,12 @@ inoremap [<CR> []<esc>i
 inoremap (<CR> ()<esc>i
 inoremap "<CR> ""<esc>i
 inoremap '<CR> ''<esc>i
+
+" netrw | help netrw-browse-maps
+let g:netrw_banner=0 " disable banner
+let g:netrw_browse_split=4 " open in prior window
+let g:netrw_altv=1 " open splits to the right
+let g:netrw_list_style=3 " tree view
 
 
 " set clipboard=unnamedplus
@@ -101,7 +109,19 @@ command YNext call YMusicNext()
 :command W w
 
 " requires installed ctags
-:command! MakeTags !ctags -R .
+" for shitty macos default ctags: 
+" $ brew install ctags
+" $ alias ctags="`brew --prefix`/bin/ctags"
+" for modern languages eg go:
+" brew tap universal-ctags/universal-ctags
+" brew install --HEAD universal-ctags
+" https://docs.ctags.io/en/latest/osx.html#building-with-homebrew
+" macsuck
+if has('mac')
+    :command! MakeTags !`brew --prefix`/bin/ctags -R .
+else
+    :command! MakeTags !ctags -R .
+endif
 
 
 " Instructions:
@@ -112,6 +132,13 @@ command YNext call YMusicNext()
 " <C-c> - vim - compile
 " :find *cp - vim - find files in a project ending in cp
 " :b uniq - vim - open recent file with unique symbols providen
+" ^] - vim+ctags - go to declaration
+" g^] - vim+ctags - find each instance of variable
+" ^t - vim+ctags - jump back
+" ^x^n - vim - find in current file
+" ^x^f - vim - find files (with wildcards)
+" ^x^] - vim - find in tags
+" ^n - vim - find anything
 "
 " gS - splitJoin - split struct declaration
 " gJ - splitJoin - join struct declaratin
@@ -133,3 +160,5 @@ command YNext call YMusicNext()
 " https://vim.fandom.com/wiki/Using_marks
 " snippets in go.snippets
 " install gotags https://github.com/jstemmer/gotags
+"
+" cmd + / - iterm - find cursor position
