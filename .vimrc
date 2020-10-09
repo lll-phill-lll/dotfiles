@@ -108,6 +108,12 @@ command YNext call YMusicNext()
 :command Q q
 :command W w
 
+
+" Snippets:
+" json-go
+nnoremap <leader>jsg :-1read $HOME/.vim/snippets/json-go<CR>f"a
+nnoremap <leader>erng :-1read $HOME/.vim/snippets/noerror-go<CR>j$a
+
 " requires installed ctags
 " for shitty macos default ctags: 
 " $ brew install ctags
