@@ -62,10 +62,10 @@ inoremap "<CR> ""<esc>i
 inoremap '<CR> ''<esc>i
 
 " netrw | help netrw-browse-maps
-let g:netrw_banner=0 " disable banner
-let g:netrw_browse_split=4 " open in prior window
-let g:netrw_altv=1 " open splits to the right
-let g:netrw_list_style=3 " tree view
+let g:netrw_banner = 0 " disable banner
+let g:netrw_liststyle = 3 " tree view of folders
+let g:netrw_browse_split = 3 " open file in a new tab
+let g:netrw_winsize = 10 " size of split
 
 
 " set clipboard=unnamedplus
@@ -139,6 +139,8 @@ endif
 " ^x^f - vim - find files (with wildcards)
 " ^x^] - vim - find in tags
 " ^n - vim - find anything
+" :Sex - vim - explore dir with horizontal split
+" :Vex - vim - explore dir with vertical split
 "
 " gS - splitJoin - split struct declaration
 " gJ - splitJoin - join struct declaratin
