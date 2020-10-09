@@ -109,6 +109,13 @@ autocmd filetype xml vnoremap <C-l> :s/\%V\(.*\)\%V/<!-- \1 -->/  <CR>
 nnoremap <leader>jsg :-1read $HOME/.vim/snippets/json-go<CR>f"a
 nnoremap <leader>erng :-1read $HOME/.vim/snippets/noerror-go<CR>j$a
 
+
+" Commands:
+command! -nargs=+ Sub call Sub(<f-args>)
+function! Sub( ... )
+        execute printf('%%substitute/%s/%s/gr', a:1, a:2)
+    endfunction
+
 " requires installed ctags
 " for shitty macos default ctags: 
 " $ brew install ctags
@@ -126,41 +133,44 @@ endif
 
 " Instructions:
 " gR - vim - vreplace
-" :%retab - vim - Change tabs
-" ,cc - vim - comment line
-" ,cu - vim - uncomment line
-" <C-c> - vim - compile
-" :find *cp - vim - find files in a project ending in cp
-" :b uniq - vim - open recent file with unique symbols providen
-" ^] - vim+ctags - go to declaration
-" g^] - vim+ctags - find each instance of variable
-" ^t - vim+ctags - jump back
-" ^x^n - vim - find in current file
-" ^x^f - vim - find files (with wildcards)
-" ^x^] - vim - find in tags
-" ^n - vim - find anything
-" :Sex - vim - explore dir with horizontal split
-" :Vex - vim - explore dir with vertical split
+" :%retab           - vim - Change tabs
+" ,cc               - vim - comment line
+" ,cu               - vim - uncomment line
+" <C-c>             - vim - compile
+" :find *cp         - vim - find files in a project ending in cp
+" :b uniq           - vim - open recent file with unique symbols providen
+" ^]                - vim+ctags - go to declaration
+" g^]               - vim+ctags - find each instance of variable
+" ^t                - vim+ctags - jump back
+" ^x^n              - vim - find in current file
+" ^x^f              - vim - find files (with wildcards)
+" ^x^]              - vim - find in tags
+" ^n                - vim - find anything
+" :Sex              - vim - explore dir with horizontal split
+" :Vex              - vim - explore dir with vertical split
 "
-" gS - splitJoin - split struct declaration
-" gJ - splitJoin - join struct declaratin
-" :GoImports - vim-go - autoImports and deletes imports
-" :UltiSnipsEdit - ultisnips - open file with snippet scripts
-" gd - vim-go - go to declaration
-" ctrl+t - vim-go - go back from declaration
-" :noh - vim - disable highlight for cirrent search
-" :GoDefStack - vim-go - show stack of locations for gd
-" :GoDefStackClear - vim-go - clear stack for gd
-" :GoDecls - vim-go - see all the declaration in file
-" :GoDeclsDir - vim-go - see all declarations in directory
-" K - vim-go - see documentation and signature
-" :GoChannelPeers - vim-go - shows channel recievers and senders
-" :GoCallees - vim-go - get all possible implememtation of given anon function
-" :GoCallers - vim-go - get all possible callers of given function
-" :GoImpl + interface_name - vim-go - create implementation of interface
-" :GoPlay - vim-go - open in go playground
+" gS                - splitJoin - split struct declaration
+" gJ                - splitJoin - join struct declaratin
+" :GoImports        - vim-go - autoImports and deletes imports
+" :UltiSnipsEdit    - ultisnips - open file with snippet scripts
+" gd                - vim-go - go to declaration
+" ctrl+t            - vim-go - go back from declaration
+" :noh              - vim - disable highlight for cirrent search
+" :GoDefStack       - vim-go - show stack of locations for gd
+" :GoDefStackClear  - vim-go - clear stack for gd
+" :GoDecls          - vim-go - see all the declaration in file
+" :GoDeclsDir       - vim-go - see all declarations in directory
+" K                 - vim-go - see documentation and signature
+" :GoChannelPeers   - vim-go - shows channel recievers and senders
+" :GoCallees        - vim-go - get all possible implememtation of given anon function
+" :GoCallers        - vim-go - get all possible callers of given function
+" :GoImpl + interfac- vim-go - create implementation of interface
+" :GoPlay           - vim-go - open in go playground
+"
+" cmd+/             - iterm - find cursor position
+"
+"
 " https://vim.fandom.com/wiki/Using_marks
 " snippets in go.snippets
 " install gotags https://github.com/jstemmer/gotags
 "
-" cmd + / - iterm - find cursor position
