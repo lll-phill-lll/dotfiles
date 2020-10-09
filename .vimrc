@@ -2,6 +2,8 @@ call plug#begin('~/.vim/plugged')
 " colorschemas
 Plug 'morhetz/gruvbox'
 Plug 'fatih/molokai'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 call plug#end()
 
@@ -14,6 +16,10 @@ set encoding=utf-8
 " symbol to start special commands
 let g:mapleader=','
 set noswapfile
+
+" for fuzzy file search
+set path+=**
+set wildmenu
 
 set relativenumber
 augroup numbertoggle
@@ -94,15 +100,21 @@ command YNext call YMusicNext()
 :command Q q
 :command W w
 
+" requires installed ctags
+:command! MakeTags !ctags -R .
+
 
 " Instructions:
-" gS - splitJoin - split struct declaration
-" gJ - splitJoin - join struct declaratin
+" gR - vim - vreplace
 " :%retab - vim - Change tabs
 " ,cc - vim - comment line
 " ,cu - vim - uncomment line
 " <C-c> - vim - compile
+" :find *cp - vim - find files in a project ending in cp
+" :b uniq - vim - open recent file with unique symbols providen
 "
+" gS - splitJoin - split struct declaration
+" gJ - splitJoin - join struct declaratin
 " :GoImports - vim-go - autoImports and deletes imports
 " :UltiSnipsEdit - ultisnips - open file with snippet scripts
 " gd - vim-go - go to declaration
