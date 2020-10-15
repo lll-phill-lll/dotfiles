@@ -5,6 +5,7 @@ Plug 'morhetz/gruvbox'
 Plug 'fatih/molokai'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'dhruvasagar/vim-table-mode'
 
 call plug#end()
 
@@ -110,6 +111,25 @@ nnoremap <leader>jsg :-1read $HOME/.vim/snippets/json-go<CR>f"a
 nnoremap <leader>erng :-1read $HOME/.vim/snippets/noerror-go<CR>j$a
 
 
+
+
+function! s:isAtStartOfLine(mapping)
+  let text_before_cursor = getline('.')[0 : col('.')-1]
+  let mapping_pattern = '\V' . escape(a:mapping, '\')
+  let comment_pattern = '\V' . escape(substitute(&l:commentstring, '%s.*$', '', ''), '\')
+  return (text_before_cursor =~? '^' . ('\v(' . comment_pattern . '\v)?') . '\s*\v' . mapping_pattern . '\v$')
+endfunction
+
+inoreabbrev <expr> <bar><bar>
+          \ <SID>isAtStartOfLine('\|\|') ?
+          \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
+inoreabbrev <expr> __
+          \ <SID>isAtStartOfLine('__') ?
+          \ '<c-o>:silent! TableModeDisable<cr>' : '__'
+
+
+
+
 " Commands:
 command! -nargs=+ Sub call Sub(<f-args>)
 function! Sub( ... )
@@ -131,8 +151,15 @@ else
     :command! MakeTags !ctags -R .
 endif
 
+"set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+"put keymap into a folder ~/.vim/keymap
+set keymap=russian-jcukenmac
+set iminsert=0
+set imsearch=0
+
+
 " Instructions:
-" gR - vim - vreplace
+" gR                - vim - vreplace
 " :%retab           - vim - Change tabs
 " ,cc               - vim - comment line
 " ,cu               - vim - uncomment line
@@ -148,6 +175,8 @@ endif
 " ^n                - vim - find anything
 " :Sex              - vim - explore dir with horizontal split
 " :Vex              - vim - explore dir with vertical split
+" :noh              - vim - disable highlight for cirrent search
+" С^                - vim - change keymap
 "
 " gS                - splitJoin - split struct declaration
 " gJ                - splitJoin - join struct declaratin
@@ -155,7 +184,6 @@ endif
 " :UltiSnipsEdit    - ultisnips - open file with snippet scripts
 " gd                - vim-go - go to declaration
 " ctrl+t            - vim-go - go back from declaration
-" :noh              - vim - disable highlight for cirrent search
 " :GoDefStack       - vim-go - show stack of locations for gd
 " :GoDefStackClear  - vim-go - clear stack for gd
 " :GoDecls          - vim-go - see all the declaration in file
