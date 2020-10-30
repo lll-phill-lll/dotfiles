@@ -1,3 +1,13 @@
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+
+
 # install vim plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -17,7 +27,17 @@ wget http://ftp.vim.org/vim/runtime/spell/ru.koi8-r.spl -P ~/.vim/spell
 wget http://ftp.vim.org/vim/runtime/spell/en.ascii.sug -P ~/.vim/spell
 wget http://ftp.vim.org/vim/runtime/spell/en.ascii.spl -P ~/.vim/spell
 
+# install custom colorsheme from .gl files
+mkdir -p ~/.vim/syntax
+mkdir -p ~/.vim/ftdetect
+ln -s ft_goals.vim ~/.vim/ftdetect/goals.vim
+ln -s syn_goals.vim ~/.vim/syntax/goals.vim
+
 #install tmux
-sudo apt install tmux
+if [ ${machine} == "Mac" ]; then
+    brew install tmux
+elif [ ${machine} == "Linux" ]; then
+    sudo apt install tmux
+fi
 # create a symlink to tmux.conf
 ln -s .tmux.conf ~/.tmux.conf
