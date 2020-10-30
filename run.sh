@@ -41,3 +41,9 @@ elif [ ${machine} == "Linux" ]; then
 fi
 # create a symlink to tmux.conf
 ln -s .tmux.conf ~/.tmux.conf
+
+# install itunes artist for mac (for tmux airline)
+if [ ${machine} == "Mac" ]; then
+    ln -s itunesartist ~/itunesartist
+    ln -s itunestrack ~/itunestrack
+fi

@@ -1,0 +1,17 @@
+#!/usr/bin/osascript
+on run
+  set info to ""
+  tell application "System Events"
+    set num to count (every process whose name is "iTunes")
+  end tell
+  if num > 0 then
+    tell application "iTunes"
+      if player state is playing then
+        set info to name of current track
+      else
+        set info to "Not Playing."
+      end if
+    end tell
+  end if
+  return info
+end run
