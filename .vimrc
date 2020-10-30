@@ -13,6 +13,7 @@ call plug#end()
 let $PATH='$HOME/.cargo/bin:/usr/bin:/usr/local/bin:/bin:/usr/sbin:/sbin'
 colorscheme gruvbox
 
+
 set background=dark
 set encoding=utf-8
 " symbol to start special commands
@@ -22,6 +23,8 @@ set noswapfile
 " for fuzzy file search
 set path+=**
 set wildmenu
+
+set termguicolors
 
 set relativenumber
 augroup numbertoggle
@@ -127,6 +130,10 @@ inoreabbrev <expr> __
           \ <SID>isAtStartOfLine('__') ?
           \ '<c-o>:silent! TableModeDisable<cr>' : '__'
 
+"Rest tables
+let g:table_mode_corner_corner='+'
+let g:table_mode_corner='+'
+let g:table_mode_header_fillchar='='
 
 
 
@@ -137,7 +144,7 @@ function! Sub( ... )
     endfunction
 
 " requires installed ctags
-" for shitty macos default ctags: 
+" for shitty macos default ctags:
 " $ brew install ctags
 " $ alias ctags="`brew --prefix`/bin/ctags"
 " for modern languages eg go:
@@ -156,6 +163,33 @@ endif
 set keymap=russian-jcukenmac
 set iminsert=0
 set imsearch=0
+
+"punctuation
+"mkdir -p ~/.vim/spell
+"    cd ~/.vim/spell
+"    wget http://ftp.vim.org/vim/runtime/spell/ru.koi8-r.sug
+"    wget http://ftp.vim.org/vim/runtime/spell/ru.koi8-r.spl
+"    wget http://ftp.vim.org/vim/runtime/spell/en.ascii.sug
+"    wget http://ftp.vim.org/vim/runtime/spell/en.ascii.spl
+
+" treat each file as md in this folder
+autocmd BufRead,BufNewFile ~/discclub set filetype=markdown
+
+" enable spelling in some files
+autocmd FileType tex,latex,markdown set spell spelllang=ru,en
+
+" remove trailing spaces while saving
+autocmd BufWritePre * %s/\s\+$//e
+
+nnoremap <leader>s :setlocal spell! spelllang=ru,en<CR>
+
+nnoremap <leader>b i<b><esc>
+nnoremap <leader>g i<g><esc>
+
+autocmd BufRead,BufNewFile *.stc set filetype=cel
+autocmd BufRead,BufNewFile *.gl set filetype=goals
+
+" autocmd BufWritePre * silent! !curl http://localhost:5678/webhook/saved
 
 
 " Instructions:
@@ -177,6 +211,15 @@ set imsearch=0
 " :Vex              - vim - explore dir with vertical split
 " :noh              - vim - disable highlight for cirrent search
 " С^                - vim - change keymap
+"
+" :set nospell      - vim - disable spelling
+" ]s                - vim - next word with mistake
+" [s                - vim - prev work with mistake
+" z=                - vim - change word from list
+" zg                - vim - good word
+" zw                - vim - wrong word
+" zG                - vim - ignore word
+" zz                - vim - center the screen
 "
 " gS                - splitJoin - split struct declaration
 " gJ                - splitJoin - join struct declaratin
