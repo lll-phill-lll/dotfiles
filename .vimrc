@@ -7,6 +7,8 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'dhruvasagar/vim-table-mode'
 
+Plug 'Yggdroot/indentLine'
+
 call plug#end()
 
 
@@ -24,7 +26,9 @@ set noswapfile
 set path+=**
 set wildmenu
 
-set termguicolors
+if has("gui_running")
+    set termguicolors
+endif
 
 set relativenumber
 augroup numbertoggle
@@ -70,6 +74,14 @@ let g:netrw_banner = 0 " disable banner
 let g:netrw_liststyle = 3 " tree view of folders
 let g:netrw_browse_split = 3 " open file in a new tab
 let g:netrw_winsize = 10 " size of split
+
+" ident line (disabled by default) <leader> + il to enable
+let g:indentLine_enabled = 0
+let g:indentLine_color_term = 239
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+nnoremap <leader>il :IndentLinesToggle<CR>
+
+
 
 
 " set clipboard=unnamedplus
@@ -160,9 +172,11 @@ endif
 
 "set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 "put keymap into a folder ~/.vim/keymap
-set keymap=russian-jcukenmac
-set iminsert=0
-set imsearch=0
+if has('mac')
+    set keymap=russian-jcukenmac
+    set iminsert=0
+    set imsearch=0
+endif
 
 "punctuation
 "mkdir -p ~/.vim/spell
@@ -220,6 +234,8 @@ autocmd BufRead,BufNewFile *.gl set filetype=goals
 " zw                - vim - wrong word
 " zG                - vim - ignore word
 " zz                - vim - center the screen
+" set cursorcolumn  - vim - set cursorcolumn
+"
 "
 " gS                - splitJoin - split struct declaration
 " gJ                - splitJoin - join struct declaratin
