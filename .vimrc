@@ -11,10 +11,8 @@ Plug 'Yggdroot/indentLine'
 
 call plug#end()
 
-
 let $PATH='$HOME/.cargo/bin:/usr/bin:/usr/local/bin:/bin:/usr/sbin:/sbin'
 colorscheme gruvbox
-
 
 set background=dark
 set encoding=utf-8
@@ -25,6 +23,9 @@ set noswapfile
 " for fuzzy file search
 set path+=**
 set wildmenu
+
+" remap esc to jk
+inoremap jk <Esc>
 
 if has("gui_running")
     set termguicolors
