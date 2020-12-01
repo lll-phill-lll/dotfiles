@@ -25,7 +25,7 @@ set path+=**
 set wildmenu
 
 " remap esc to jk
-inoremap jk <Esc>
+inoremap jk <Esc> :w <CR>
 
 if has("gui_running")
     set termguicolors
@@ -226,6 +226,12 @@ autocmd BufRead,BufNewFile *.gl set filetype=goals
 " :Vex              - vim - explore dir with vertical split
 " :noh              - vim - disable highlight for cirrent search
 " С^                - vim - change keymap
+" T,F               - vim - same as t,f but move backwards
+" P                 - vim - paste before the cursor
+" ab                - vim - visual block in () (works in visual mode)
+" aB                - vim - visual block in {} (works in visual mode)
+" o                 - vim - move to block corner (works in visual mode)
+" O                 - vim - move to OTHER block corner (works in visual mode)
 "
 " :set nospell      - vim - disable spelling
 " ]s                - vim - next word with mistake
