@@ -14,6 +14,31 @@ call plug#end()
 let $PATH='$HOME/.cargo/bin:/usr/bin:/usr/local/bin:/bin:/usr/sbin:/sbin'
 colorscheme gruvbox
 
+
+
+" status line
+
+function! ArcBranch()
+      return  substitute(system("arc branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
+endfunction
+
+set laststatus=2
+augroup gitstatusline
+    au!
+    " :help autocmd-events-abc
+    autocmd BufWritePre,BufEnter *
+            \ let b:arc_status = ArcBranch()
+augroup end
+
+let &statusline = '[%{get(b:, "arc_status", "")}]'
+
+set statusline+=%<\                       " cut at start
+set statusline+=%-40f\                    " path
+set statusline+=%=%y%*%*\              " file type
+set statusline+=%10((%l,%c)%)\            " line and column
+set statusline+=%P
+" status line end
+
 set background=dark
 set encoding=utf-8
 " symbol to start special commands
