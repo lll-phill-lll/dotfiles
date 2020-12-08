@@ -22,15 +22,19 @@ function! ArcBranch()
       return  substitute(system("arc branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
 endfunction
 
+function! GitBranch()
+      return  substitute(system("git branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
+endfunction
+
 set laststatus=2
 augroup gitstatusline
     au!
     " :help autocmd-events-abc
-    autocmd BufWritePre,BufEnter *
-            \ let b:arc_status = ArcBranch()
+    autocmd BufWritePre,BufEnter * let b:arc_status = ArcBranch()
+    autocmd BufWritePre,BufEnter * let b:git_status = GitBranch()
 augroup end
 
-let &statusline = '[%{get(b:, "arc_status", "")}]'
+let &statusline = '[%{get(b:, "arc_status", "")}%{get(b:, "git_status", "")}]'
 
 set statusline+=%<\                       " cut at start
 set statusline+=%-40f\                    " path
