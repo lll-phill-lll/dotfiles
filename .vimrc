@@ -3,8 +3,6 @@ call plug#begin('~/.vim/plugged')
 " colorschemas
 Plug 'morhetz/gruvbox'
 Plug 'fatih/molokai'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
 Plug 'dhruvasagar/vim-table-mode'
 
 Plug 'Yggdroot/indentLine'
