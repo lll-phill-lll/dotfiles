@@ -53,6 +53,7 @@ set wildmenu
 
 " remap esc to jk
 inoremap jk <Esc> :w <CR>
+inoremap kj <Esc> :w <CR>
 
 if has("gui_running")
     set termguicolors
@@ -117,8 +118,8 @@ nnoremap <leader>il :IndentLinesToggle<CR>
 autocmd filetype cpp nnoremap <C-c> :w <bar> !clear && g++ -std=gnu++14 -O0 % -o %:h/%:t:r.lol && ./%:r.lol<CR>
 " mb add :p before :h/%:t...
 
-autocmd filetype c nnoremap <C-c> :w <bar> !clear && gcc -pthread -lm % -o %:p:h/%:t:r.lol && ./%:r.lol<CR>
-autocmd filetype c nnoremap <C-k> :w <bar> !clear && gcc -c  % && gcc %:h/%:t:r.o -lglpk -lgmp -lm -o %:h/%:t:r.lol && ./%:r.lol<CR>
+autocmd filetype c nnoremap <C-c> :w <bar> !clear && gcc -pthread -lm -fopenmp % -o %:p:h/%:t:r.lol && ./%:r.lol<CR>
+autocmd filetype c nnoremap <C-k> :w <bar> !clear && gcc -c  % && gcc %:h/%:t:r.o -fopenmp -lglpk -lgmp -lm -o %:h/%:t:r.lol && ./%:r.lol<CR>
 
 autocmd filetype java nnoremap <C-c> :w <bar> !javac % && java -enableassertions %:p <CR>
 autocmd filetype python nnoremap <C-c> :w <bar> !python3 % <CR>
@@ -152,6 +153,8 @@ autocmd filetype xml vnoremap <C-l> :s/\%V\(.*\)\%V/<!-- \1 -->/  <CR>
 " json-go
 nnoremap <leader>jsg :-1read $HOME/.vim/snippets/json-go<CR>f"a
 nnoremap <leader>erng :-1read $HOME/.vim/snippets/noerror-go<CR>j$a
+
+xnoremap <leader>jq :!jq . <CR>
 
 
 
