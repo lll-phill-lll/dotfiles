@@ -10,7 +10,8 @@ colorscheme gruvbox
 " Default settings:
 " -------------------------------------
 set background=dark
-set encoding=utf-8
+" set encoding=utf-8
+set encoding=cp1251
 " symbol to start special commands
 let g:mapleader=','
 set noswapfile
@@ -232,7 +233,21 @@ function! Inc(x)
     let a:x[0] += 1
     return a:x[0]
 endfunction
-vnoremap <leader>c :let i=[0] | '<,'>s/$/\=Inc(i)
+
+
+
+" Tabs navigation
+noremap <leader>1 1gt
+noremap <leader>2 2gt
+noremap <leader>3 3gt
+noremap <leader>4 4gt
+noremap <leader>5 5gt
+noremap <leader>6 6gt
+noremap <leader>7 7gt
+noremap <leader>8 8gt
+noremap <leader>9 9gt
+noremap <leader>0 :tablast<cr>
+
 
 
 " Instructions:
@@ -260,6 +275,10 @@ vnoremap <leader>c :let i=[0] | '<,'>s/$/\=Inc(i)
 " aB                - vim - visual block in {} (works in visual mode)
 " o                 - vim - move to block corner (works in visual mode)
 " O                 - vim - move to OTHER block corner (works in visual mode)
+"
+" Tabs:
+" :tabmove +2       - vim - move surrent tab 2 position right
+" N + gt            - vim - go to tab number N
 "
 " :set nospell      - vim - disable spelling
 " ]s                - vim - next word with mistake
