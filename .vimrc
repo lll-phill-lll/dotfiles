@@ -3,6 +3,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'morhetz/gruvbox'
 Plug 'Yggdroot/indentLine'
 Plug 'dhruvasagar/vim-table-mode'
+Plug 'mhinz/vim-startify'
 call plug#end()
 
 colorscheme gruvbox
@@ -120,7 +121,8 @@ inoremap '<CR> ''<esc>i
 let g:netrw_banner = 0 " disable banner
 let g:netrw_liststyle = 3 " tree view of folders
 let g:netrw_browse_split = 3 " open file in a new tab
-let g:netrw_winsize = 20 " size of split
+let g:netrw_winsize = 40 " size of split
+let g:netrw_keepdir=1
 " -------------------------------------
 " end netrw settings
 
@@ -195,6 +197,7 @@ if has('mac')
 else
     :command! MakeTags !ctags -R .
 endif
+set tags=tags
 
 "set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 "put keymap into a folder ~/.vim/keymap
@@ -220,6 +223,16 @@ autocmd FileType tex,latex,markdown set spell spelllang=ru,en
 
 " remove trailing spaces while saving
 autocmd BufWritePre * %s/\s\+$//e
+
+function! MakeClangFormat()
+  if &modified && !empty(findfile('.clang-format', expand('%:p:h') . ';'))
+    let cursor_pos = getpos('.')
+    :%!clang-format-13
+    call setpos('.', cursor_pos)
+  endif
+endfunction
+
+autocmd BufWritePre *.h,*.hpp,*.c,*.cpp, :call MakeClangFormat()
 
 nnoremap <leader>s :setlocal spell! spelllang=ru,en<CR>
 

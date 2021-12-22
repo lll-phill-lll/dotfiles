@@ -39,6 +39,7 @@ if [ ${machine} == "Mac" ]; then
 elif [ ${machine} == "Linux" ]; then
     sudo apt install tmux
 fi
+sudo apt install clang-format-13
 # create a symlink to tmux.conf
 ln -n .tmux.conf ~/.tmux.conf
 
