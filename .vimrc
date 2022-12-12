@@ -1,30 +1,48 @@
 " required vim with python3 support
 call plug#begin('~/.vim/plugged')
+Plug 'sheerun/vim-polyglot'
 Plug 'morhetz/gruvbox'
 Plug 'Yggdroot/indentLine'
 Plug 'dhruvasagar/vim-table-mode'
-Plug 'mhinz/vim-startify'
+Plug 'preservim/tagbar'
+Plug 'kien/ctrlp.vim'
+Plug 'onur/vim-motivate'
+
 call plug#end()
 
+
 colorscheme gruvbox
+
+let g:gruvbox_contrast_dark='hard'
+let g:gruvbox_contrast_light='hard'
 
 " Default settings:
 " -------------------------------------
 set background=dark
-" set encoding=utf-8
-set encoding=cp1251
 " symbol to start special commands
 let g:mapleader=','
 set noswapfile
+set nocompatible
 
 " for fuzzy file search
 set path+=**
 set wildmenu
 
+set foldmethod=indent
+set foldlevel=99
+nnoremap <space> za
+
 " remap esc to jk
 inoremap jk <Esc> :w <CR>
 inoremap kj <Esc> :w <CR>
 
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+
+if has('termguicolors')
+  set termguicolors
+endif
 if has("gui_running")
     set termguicolors
 endif
@@ -35,8 +53,8 @@ set backspace=indent,eol,start
 " when indenting with '>', use 4 spaces width
 set shiftwidth=4
 set number
-set hlsearch	" highlight search results
-set incsearch 	" increment search
+set hlsearch    " highlight search results
+set incsearch   " increment search
 
 set tabstop=4
 
@@ -53,31 +71,59 @@ syntax on
 " -------------------------------------
 
 
+" CtrlP
+"-------------------------------------
+
+let g:ctrlp_working_path_mode = 'c'
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*Debug*,*Final*,*Release*
+nnoremap <C-p> :CtrlP :pwd<CR>
+nnoremap <leader>b :CtrlPBuffer<CR>
+
+"-------------------------------------
+
+
 " status line
 " -------------------------------------
-function! ArcBranch()
-      return  substitute(system("arc branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
-endfunction
+"
+" git/arc status line
+" function! ArcBranch()
+"       return  substitute(system("arc branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
+" endfunction
+"
+" function! GitBranch()
+"       return  substitute(system("git branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
+" endfunction
 
-function! GitBranch()
-      return  substitute(system("git branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
-endfunction
+" augroup gitstatusline
+"     au!
+"     " :help autocmd-events-abc
+"     autocmd BufWritePre,BufEnter * let b:arc_status = ArcBranch()
+"     autocmd BufWritePre,BufEnter * let b:git_status = GitBranch()
+" augroup end
+
+" let &statusline = '[%{get(b:, "arc_status", "")}%{get(b:, "git_status", "")}]'
+
+hi statusline ctermfg=007 ctermbg=236 guibg=#303030 guifg=#adadad
 
 set laststatus=2
-augroup gitstatusline
-    au!
-    " :help autocmd-events-abc
-    autocmd BufWritePre,BufEnter * let b:arc_status = ArcBranch()
-    autocmd BufWritePre,BufEnter * let b:git_status = GitBranch()
-augroup end
 
-let &statusline = '[%{get(b:, "arc_status", "")}%{get(b:, "git_status", "")}]'
-
+set statusline=
 set statusline+=%<\                       " cut at start
-set statusline+=%-40f\                    " path
+set statusline+=%m%f\                    " path
+set statusline+=%{tagbar#currenttag('[%s]','')}
 set statusline+=%=%y%*%*\                 " file type
 set statusline+=%10((%l,%c)%)\            " line and column
+set statusline+=\            " line and column
 set statusline+=%P
+
+hi User1 ctermfg=007 ctermbg=239 guibg=#4e4e4e guifg=#adadad
+hi User2 ctermfg=007 ctermbg=236 guibg=#303030 guifg=#adadad
+hi User3 ctermfg=236 ctermbg=236 guibg=#303030 guifg=#303030
+hi User4 ctermfg=239 ctermbg=239 guibg=#4e4e4e guifg=#4e4e4e
+
+" let g:airline_theme='gruvbox'
+" let g:airline#extensions#tagbar#enabled = 1
+
 " -------------------------------------
 " status line end
 
@@ -227,7 +273,7 @@ autocmd BufWritePre * %s/\s\+$//e
 function! MakeClangFormat()
   if &modified && !empty(findfile('.clang-format', expand('%:p:h') . ';'))
     let cursor_pos = getpos('.')
-    :%!clang-format-13
+    :silent %!clang-format-13
     call setpos('.', cursor_pos)
   endif
 endfunction
@@ -236,18 +282,19 @@ autocmd BufWritePre *.h,*.hpp,*.c,*.cpp, :call MakeClangFormat()
 
 nnoremap <leader>s :setlocal spell! spelllang=ru,en<CR>
 
-nnoremap <leader>b i<b><esc>
-nnoremap <leader>g i<g><esc>
+" nnoremap <leader>b i<b><esc>
+" nnoremap <leader>g i<g><esc>
 
-autocmd BufRead,BufNewFile *.stc set filetype=cel
-autocmd BufRead,BufNewFile *.gl set filetype=goals
+" autocmd BufRead,BufNewFile *.stc set filetype=cel
+" autocmd BufRead,BufNewFile *.gl set filetype=goals
+autocmd BufRead,BufNewFile *.S set filetype=nasm
 
 function! Inc(x)
     let a:x[0] += 1
     return a:x[0]
 endfunction
 
-
+noremap <leader>t :TagbarOpenAutoClose<CR>
 
 " Tabs navigation
 noremap <leader>1 1gt
@@ -260,6 +307,43 @@ noremap <leader>7 7gt
 noremap <leader>8 8gt
 noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
+
+" buffers
+nnoremap gb :ls<CR>:b<Space>
+
+
+fu! MyTabLabel(n)
+let buflist = tabpagebuflist(a:n)
+let winnr = tabpagewinnr(a:n)
+let string = fnamemodify(bufname(buflist[winnr - 1]), ':t')
+return empty(string) ? '[unnamed]' : string
+endfu
+
+fu! MyTabLine()
+let s = ''
+for i in range(tabpagenr('$'))
+" select the highlighting
+    if i + 1 == tabpagenr()
+    let s .= '%#TabLineSel#'
+    else
+    let s .= '%#TabLine#'
+    endif
+
+    " set the tab page number (for mouse clicks)
+    "let s .= '%' . (i + 1) . 'T'
+    " display tabnumber (for use with <count>gt, etc)
+    let s .= '['. (i+1) . ']'
+
+    " the label is made by MyTabLabel()
+    let s .= '%{MyTabLabel(' . (i + 1) . ')} '
+
+    " if i+1 < tabpagenr('$')
+    "     let s .= ' |'
+    " endif
+endfor
+return s
+endfu
+set tabline=%!MyTabLine()
 
 
 
@@ -288,6 +372,18 @@ noremap <leader>0 :tablast<cr>
 " aB                - vim - visual block in {} (works in visual mode)
 " o                 - vim - move to block corner (works in visual mode)
 " O                 - vim - move to OTHER block corner (works in visual mode)
+" Ctrl-y            - vim - Moves screen up one line
+" Ctrl-e            - vim - Moves screen down one line
+" Ctrl-u            - vim - Moves cursor & screen up ½ page
+" Ctrl-d            - vim - Moves cursor & screen down ½ page
+" Ctrl-b            - vim - Moves screen up one page, cursor to last line
+" Ctrl-f            - vim - Moves screen down one page, cursor to first line
+" Ctrl-y            - vim - and Ctrl-e only change the cursor position if it would be moved off screen.
+" zz                - vim - move current line to the middle of the screen
+" zt                - vim - move current line to the top of the screen
+" zb                - vim - move current line to the bottom of the screen
+
+
 "
 " Tabs:
 " :tabmove +2       - vim - move surrent tab 2 position right
