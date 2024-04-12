@@ -12,10 +12,15 @@ esac
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
+# install vim plug for nvim
+curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
 # create symlink to vimrc
 ln -n .vimrc ~/.vimrc
 #install plugins
 vim +PlugInstall +qall > /dev/null
+nvim +PlugInstall +qall > /dev/null
 # install russian mac keymap
 mkdir -p ~/.vim/keymap
 wget https://github.com/vim/vim/blob/master/runtime/keymap/russian-jcukenmac.vim -P ~/.vim/keymap
