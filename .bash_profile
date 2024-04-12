@@ -1,6 +1,7 @@
-alias vim='mvim -v'
+if [ -f "$HOME/.profile" ]; then
+    . "$HOME/.profile"
+fi
 
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/mfilitov/.sdkman"
-[[ -s "/Users/mfilitov/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/mfilitov/.sdkman/bin/sdkman-init.sh"
+if [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
+fi

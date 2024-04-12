@@ -18,10 +18,14 @@ elif [ ${machine} == "Linux" ]; then
     sudo apt -y install tmux
     # manager symlinks
     sudo apt -y install stow
-    sudo apt -y install neovim
 
     sudo apt -y install clang-format
 fi
+
+# install neovim
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+sudo rm -rf /opt/nvim
+sudo tar -C /opt -xzf nvim-linux64.tar.gz
 
 
 # install vim plug
