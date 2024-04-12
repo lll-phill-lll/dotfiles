@@ -55,6 +55,7 @@ set backspace=indent,eol,start
 " when indenting with '>', use 4 spaces width
 set shiftwidth=4
 set number
+
 set hlsearch    " highlight search results
 set incsearch   " increment search
 
