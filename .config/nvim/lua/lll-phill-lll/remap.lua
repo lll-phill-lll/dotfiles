@@ -8,7 +8,6 @@ end
 
 -- Save file and exit Insert mode by pressing "jk" or "kj"
 silentNoremap('i', 'jk', '<Esc> :w <CR>k')
-
 silentNoremap('i', 'kj', '<Esc> :w <CR>k')
 
 
@@ -31,6 +30,8 @@ silentNoremap('n', '<leader>7', '7gt')
 silentNoremap('n', '<leader>8', '8gt')
 silentNoremap('n', '<leader>9', '9gt')
 silentNoremap('n', '<leader>0', ':tablast<CR>')
+
+silentNoremap('n', '<leader>rr', '<cmd>source ~/.config/nvim/init.lua<CR>')
 
 -- Move highlighted group
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")

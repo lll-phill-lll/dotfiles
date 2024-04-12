@@ -117,3 +117,4 @@ alias gdbdqrun="gdb --args ./dqrun -s -p query.sql --enable-spilling  --gateways
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+alias ya='~/ydbwork/ydb/ya'

@@ -27,7 +27,7 @@ vim.opt.scrolloff = 10
 
 vim.opt.updatetime = 50
 
-vim.opt.colorcolumn = "120"
+-- vim.opt.colorcolumn = "120"
 
 -- Fix stupid tab
 vim.opt.tabstop = 4
