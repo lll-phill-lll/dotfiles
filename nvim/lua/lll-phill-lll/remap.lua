@@ -2,8 +2,9 @@
 -- To see mapping related to plugins navigate to after/plugged/<plugin name>
 vim.g.mapleader = ","
 
-funtion silentNoremap(mode, from, to)
-    silentNoremap(mode, from, to, { noremap=true, silent=true })
+silentNoremap = function(mode, from, to)
+    vim.api.nvim_set_keymap(mode, from, to, { noremap=true, silent=true })
+end
 
 -- Save file and exit Insert mode by pressing "jk" or "kj"
 silentNoremap('i', 'jk', '<Esc> :w <CR>k')

@@ -18,4 +18,7 @@ end })
 -- Show the tree of all changes. Persistent storage (undo also after nvim reload)
 Plug('mbbill/undotree')
 
+-- Default configs for lsp
+Plug('neovim/nvim-lspconfig')
+
 vim.call('plug#end')

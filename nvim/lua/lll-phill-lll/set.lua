@@ -4,6 +4,8 @@ vim.cmd([[colorscheme gruvbox]])
 
 -- Always use rectangle as a cursor
 vim.opt.guicursor = ""
+-- Disable mouse
+vim.opt.mouse = ""
 
 -- Disable swap files
 vim.opt.swapfile = false
