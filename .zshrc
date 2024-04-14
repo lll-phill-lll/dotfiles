@@ -1,5 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH="$PATH:/Users/phill/flutter/bin"
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -64,23 +65,18 @@ ZSH_THEME="robbyrussell"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
+if [[ $TMUX_PANE ]]; then
+    HISTFILE=$HOME/.tmux_history_${TMUX_PANE:1}
+fi
 
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-#
-if [[ $TMUX_PANE ]]; then
-  HISTFILE=$HOME/.bash_history_tmux_${TMUX_PANE:1}
-fi
+plugins=(git)
 
-
-ZSH_DISABLE_COMPFIX=true
 source $ZSH/oh-my-zsh.sh
-
-
-export PATH="$PATH:/opt/nvim-linux64/bin"
 
 # User configuration
 
@@ -103,18 +99,10 @@ export PATH="$PATH:/opt/nvim-linux64/bin"
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
+alias ctags="`brew --prefix`/bin/ctags"
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-#
-alias gotools="cd /home/mfilitov/ydbwork/ydb/ydb/library/yql/tools"
-alias ya='~/ydbwork/ydb/ya'
-alias syncrepo="gh repo sync lll-phill-lll/ydb -s ydb-platform/ydb"
-alias dqrun="./dqrun -s -p query.sql --enable-spilling --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json"
-alias dqrunnospilling="./dqrun -s -p query.sql --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json"
-alias gdbdqrun="gdb --args ./dqrun -s -p query.sql --enable-spilling  --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json"
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-alias ya='~/ydbwork/ydb/ya'
+export PATH="/usr/local/opt/llvm/bin:$PATH"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"

@@ -1,14 +1,13 @@
 " required vim with python3 support
 call plug#begin('~/.vim/plugged')
-Plug 'sheerun/vim-polyglot'
 Plug 'morhetz/gruvbox'
 Plug 'Yggdroot/indentLine'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'preservim/tagbar'
 Plug 'kien/ctrlp.vim'
 Plug 'onur/vim-motivate'
-Plug 'ycm-core/YouCompleteMe'
-Plug 'easymotion/vim-easymotion'
+Plug 'vim-scripts/asmx86_64'
+Plug 'bfrg/vim-cpp-modern'
 
 call plug#end()
 
@@ -20,11 +19,13 @@ let g:gruvbox_contrast_light='hard'
 
 " Default settings:
 " -------------------------------------
-set background=light
+set background=dark
 " symbol to start special commands
 let g:mapleader=','
 set noswapfile
 set nocompatible
+
+set splitbelow
 
 " for fuzzy file search
 set path+=**
@@ -55,7 +56,6 @@ set backspace=indent,eol,start
 " when indenting with '>', use 4 spaces width
 set shiftwidth=4
 set number
-
 set hlsearch    " highlight search results
 set incsearch   " increment search
 
@@ -89,22 +89,22 @@ nnoremap <leader>b :CtrlPBuffer<CR>
 " -------------------------------------
 "
 " git/arc status line
-function! ArcBranch()
-      return  substitute(system("arc branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
-endfunction
+" function! ArcBranch()
+"       return  substitute(system("arc branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
+" endfunction
+"
+" function! GitBranch()
+"       return  substitute(system("git branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
+" endfunction
 
-function! GitBranch()
-      return  substitute(system("git branch 2>/dev/null | grep '\*' | cut -f2 -d' ' | sed -e 's#^users/.*/##'"), '\n', '', 'g')
-endfunction
+" augroup gitstatusline
+"     au!
+"     " :help autocmd-events-abc
+"     autocmd BufWritePre,BufEnter * let b:arc_status = ArcBranch()
+"     autocmd BufWritePre,BufEnter * let b:git_status = GitBranch()
+" augroup end
 
-augroup gitstatusline
-    au!
-    " :help autocmd-events-abc
-    autocmd BufWritePre,BufEnter * let b:arc_status = ArcBranch()
-    autocmd BufWritePre,BufEnter * let b:git_status = GitBranch()
-augroup end
-
-let &statusline = '[%{get(b:, "arc_status", "")}%{get(b:, "git_status", "")}]'
+" let &statusline = '[%{get(b:, "arc_status", "")}%{get(b:, "git_status", "")}]'
 
 hi statusline ctermfg=007 ctermbg=236 guibg=#303030 guifg=#adadad
 
@@ -146,7 +146,6 @@ autocmd filetype perl nnoremap <C-c> :w <bar> !perl % <CR>
 autocmd filetype go nnoremap <C-c> :w <bar> !go build % && ./%:p <CR>
 " -------------------------------------
 " end compile and run
-
 
 " brackets matching:
 " -------------------------------------
@@ -271,10 +270,24 @@ autocmd BufRead,BufNewFile ~/discclub set filetype=markdown
 autocmd FileType tex,latex,markdown set spell spelllang=ru,en
 
 " remove trailing spaces while saving
-" autocmd BufWritePre * %s/\s\+$//e
+autocmd BufWritePre * %s/\s\+$//e
 
+function! MakeClangFormat()
+  if &modified && !empty(findfile('.clang-format', expand('%:p:h') . ';'))
+    let cursor_pos = getpos('.')
+    :silent %!clang-format
+    call setpos('.', cursor_pos)
+  endif
+endfunction
+
+" tmux display-popup -EE "man 3 $line || man 2 $line"
+
+autocmd BufWritePre *.h,*.hpp,*.c,*.cpp, :call MakeClangFormat()
 
 nnoremap <leader>s :setlocal spell! spelllang=ru,en<CR>
+
+let compile_cmd = 'tmux display-popup -EE gcc hello.c && ./a.out'
+nnoremap <leader>c :call system(compile_cmd)<CR>
 
 " nnoremap <leader>b i<b><esc>
 " nnoremap <leader>g i<g><esc>
@@ -340,37 +353,6 @@ endfu
 set tabline=%!MyTabLine()
 
 
-nnoremap <silent><Leader><C-]> <C-w><C-]><C-w>T
-
-" YCM
-
-let g:ycm_key_invoke_completion = '<C-l>'
-
-" Let clangd fully control code completion
-let g:ycm_clangd_uses_ycmd_caching = 0
-" Use installed clangd, not YCM-bundled clangd which doesn't get updates.
-let g:ycm_clangd_binary_path = exepath("clangd-14")
-nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
-
-
-" easymotion
-
-let g:EasyMotion_do_mapping = 0 " Disable default mappings
-
-" Jump to anywhere you want with minimal keystrokes, with just one key binding.
-" `s{char}{label}`
-nmap s <Plug>(easymotion-overwin-f)
-" or
-" `s{char}{char}{label}`
-" Need one more keystroke, but on average, it may be more comfortable.
-nmap s <Plug>(easymotion-overwin-f2)
-
-" Turn on case-insensitive feature
-let g:EasyMotion_smartcase = 1
-
-" JK motions: Line motions
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
 
 " Instructions:
 " gR                - vim - vreplace
