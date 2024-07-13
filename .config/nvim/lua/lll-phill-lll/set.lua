@@ -1,4 +1,4 @@
-vim.o.background = 'light'
+vim.o.background = 'dark'
 
 vim.cmd([[colorscheme gruvbox]])
 
@@ -34,3 +34,7 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
+
+-- Open splint on right or below
+vim.opt.splitright = true
+vim.opt.splitbelow = true

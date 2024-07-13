@@ -43,9 +43,8 @@ end
 lspconfig.clangd.setup {
     on_attach = on_attach,
     cmd = {
-        "/home/mfilitov/.vscode-server/data/User/globalStorage/llvm-vs-code-extensions.vscode-clangd/install/17.0.3/clangd_17.0.3/bin/clangd",
+        "clangd",
         "--background-index",
-        "--compile-commands-dir=/home/mfilitov/ydbwork/vscode/yqllib",
         "--pch-storage=memory",
         "--all-scopes-completion",
         "--pretty",

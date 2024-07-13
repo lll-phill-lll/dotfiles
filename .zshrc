@@ -74,7 +74,7 @@ fi
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+# plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -106,3 +106,4 @@ alias ctags="`brew --prefix`/bin/ctags"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 export PATH="/usr/local/opt/llvm/bin:$PATH"
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+
