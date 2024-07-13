@@ -1,0 +1,28 @@
+[ env ]
+TERM = "xterm-256color"
+
+[ window ]
+padding.x = 0
+padding.y = 10
+
+decorations = "None"
+
+opacity = 0.7
+blur = true
+
+option_as_alt = "Both"
+
+# Maximized Fullscreen Windowed
+# macos only SimpleFullscreen
+startup_mode = "SimpleFullscreen"
+
+[ window.dimensions ]
+columns = 133
+lines = 40
+
+[ font ]
+normal.family = "Hack Nerd Font"
+
+size = 22
+offset.x = 0
+offset.y = 0

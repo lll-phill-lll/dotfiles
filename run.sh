@@ -14,6 +14,22 @@ if [ ${machine} == "Mac" ]; then
     brew install tmux
     brew install neovim
     brew install stow
+
+    brew install --cast alacritty
+
+    # unnecessary
+    # brew tap homebrew/cask
+
+    # install font from here: https://www.nerdfonts.com/font-downloads
+    brew install --cask font-hack-nerd-font
+
+
+    # show cmd+tab list on every connected display
+    # https://www.reddit.com/r/mac/comments/pmoa2t/a_little_tip_for_people_using_multiple_displays/
+    defaults write com.apple.Dock appswitcher-all-displays -bool true; killall Dock
+    # to revert:
+    # defaults delete com.apple.Dock appswitcher-all-displays; killall Dock
+
     # TODO
 elif [ ${machine} == "Linux" ]; then
     sudo apt update
