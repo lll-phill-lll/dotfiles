@@ -44,6 +44,11 @@ elif [ ${machine} == "Linux" ]; then
     echo "Removing nvim installed with apt"
     sudo rm -rf /opt/nvim
     sudo tar -C /opt -xzf nvim-linux64.tar.gz
+
+    # plugin manager for tmux
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    # install plugins
+    ~/.tmux/plugins/tpm/bin/install_plugins
 fi
 
 
