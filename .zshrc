@@ -74,25 +74,18 @@ fi
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-<<<<<<< Updated upstream
 # plugins=(git)
-=======
 #
 mkdir -p .histories
 if [[ $TMUX_PANE ]]; then
   HISTFILE=$HOME/.histories/.bash_history_tmux_${TMUX_PANE:1}
 fi
->>>>>>> Stashed changes
 
 source $ZSH/oh-my-zsh.sh
-
-<<<<<<< Updated upstream
-=======
 
 export PATH="$PATH:/opt/nvim-linux64/bin"
 export PATH="$PATH:/home/mfilitov/.local/bin/"
 
->>>>>>> Stashed changes
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
