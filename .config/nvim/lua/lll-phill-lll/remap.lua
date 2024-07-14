@@ -18,6 +18,7 @@ silentNoremap('n', 'k', 'gk')
 -- Save and quit files with Q and W
 vim.api.nvim_create_user_command('W', 'w', { force = true })
 vim.api.nvim_create_user_command('Q', 'q', { force = true })
+vim.api.nvim_create_user_command('E', 'e', { force = true })
 
 -- Navigate tabs
 silentNoremap('n', '<leader>1', '1gt')

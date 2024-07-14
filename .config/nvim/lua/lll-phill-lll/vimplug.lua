@@ -21,4 +21,10 @@ Plug('mbbill/undotree')
 -- Default configs for lsp
 Plug('neovim/nvim-lspconfig')
 
+-- Show context of functions
+Plug('nvim-treesitter/nvim-treesitter-context')
+
+-- Move across objects easely
+Plug('nvim-treesitter/nvim-treesitter-textobjects')
+
 vim.call('plug#end')

@@ -25,7 +25,7 @@ ZSH_THEME="robbyrussell"
 # HYPHEN_INSENSITIVE="true"
 
 # Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
+zstyle ':omz:update' mode disabled  # disable automatic updates
 # zstyle ':omz:update' mode auto      # update automatically without asking
 # zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
@@ -74,10 +74,25 @@ fi
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
+<<<<<<< Updated upstream
 # plugins=(git)
+=======
+#
+mkdir -p .histories
+if [[ $TMUX_PANE ]]; then
+  HISTFILE=$HOME/.histories/.bash_history_tmux_${TMUX_PANE:1}
+fi
+>>>>>>> Stashed changes
 
 source $ZSH/oh-my-zsh.sh
 
+<<<<<<< Updated upstream
+=======
+
+export PATH="$PATH:/opt/nvim-linux64/bin"
+export PATH="$PATH:/home/mfilitov/.local/bin/"
+
+>>>>>>> Stashed changes
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -107,3 +122,15 @@ alias ctags="`brew --prefix`/bin/ctags"
 export PATH="/usr/local/opt/llvm/bin:$PATH"
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
+alias gotools="cd /home/mfilitov/ydbwork/ydb/ydb/library/yql/tools"
+alias ya='~/ydbwork/ydb/ya'
+alias syncrepo="gh repo sync lll-phill-lll/ydb -s ydb-platform/ydb"
+alias dqrun="./dqrun -s -p query.sql --enable-spilling --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json --udfs-dir ../../udfs/common/"
+alias dqrunnospilling="./dqrun -s -p query.sql --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json"
+alias gdbdqrun="gdb --args ./dqrun -s -p query.sql --enable-spilling  --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json --udfs-dir ../../udfs/common/"
+alias ym="ya make -d"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+alias ya='~/ydbwork/ydb/ya'
+alias mem='watch -n1 du -h .'

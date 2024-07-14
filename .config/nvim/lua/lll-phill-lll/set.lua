@@ -38,3 +38,7 @@ vim.opt.expandtab = true
 -- Open splint on right or below
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+
+vim.opt.completeopt="menu"
+
+vim.o.termguicolors = true
