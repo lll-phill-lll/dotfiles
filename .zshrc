@@ -65,8 +65,11 @@ zstyle ':omz:update' mode disabled  # disable automatic updates
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
+mkdir -p ~/.histories
 if [[ $TMUX_PANE ]]; then
-    HISTFILE=$HOME/.tmux_history_${TMUX_PANE:1}
+    tmux_session=$(tmux list-panes -t "$TMUX_PANE" -F '#S' | head -n1)
+    dir=$(basename $PWD)
+    HISTFILE=~/.histories/.tmux_${tmux_session}_${dir}_${TMUX_PANE:1}
 fi
 
 # Which plugins would you like to load?
