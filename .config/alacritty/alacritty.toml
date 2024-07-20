@@ -7,7 +7,7 @@ padding.y = 10
 
 decorations = "None"
 
-opacity = 0.7
+opacity = 0.8
 blur = true
 
 option_as_alt = "Both"
@@ -26,3 +26,7 @@ normal.family = "Hack Nerd Font"
 size = 22
 offset.x = 0
 offset.y = 0
+
+[ colors.primary ]
+background = "0x1d2021"
+foreground = "0xffffff"
