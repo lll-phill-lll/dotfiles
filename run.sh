@@ -45,11 +45,15 @@ elif [ ${machine} == "Linux" ]; then
     echo "Removing nvim installed with apt"
     sudo rm -rf /opt/nvim
     sudo tar -C /opt -xzf nvim-linux64.tar.gz
+    PATH="$PATH:/opt/nvim-linux64/bin"
 
     #install zsh
     sudo apt -y install zsh
     # install oh-my-zsh
-    sh -c "$(curl -fsSL https://install.ohmyz.sh/)"
+    sh -c "$(yes N | curl -fsSL https://install.ohmyz.sh/)"
+    curl -fsSL https://install.ohmyz.sh/ > ohmyzshsetup
+    chmod +x ohmyzshsetup
+    yes N | ./ohmyzshsetup
 
     # plugin manager for tmux
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -73,3 +77,5 @@ stow --adopt .
 #install plugins for vim and nvim
 vim +PlugInstall +qall > /dev/null
 nvim --headless +PlugInstall +qall > /dev/null
+
+chsh -s $(which zsh)
