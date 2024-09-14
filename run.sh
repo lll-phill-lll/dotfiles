@@ -36,6 +36,7 @@ elif [ ${machine} == "Linux" ]; then
     sudo apt -y install tmux
     # manager symlinks
     sudo apt -y install stow
+    sudo apt -y install git wget curl
 
     sudo apt -y install clang-format
 
@@ -44,6 +45,11 @@ elif [ ${machine} == "Linux" ]; then
     echo "Removing nvim installed with apt"
     sudo rm -rf /opt/nvim
     sudo tar -C /opt -xzf nvim-linux64.tar.gz
+
+    #install zsh
+    sudo apt -y install zsh
+    # install oh-my-zsh
+    sh -c "$(curl -fsSL https://install.ohmyz.sh/)"
 
     # plugin manager for tmux
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
