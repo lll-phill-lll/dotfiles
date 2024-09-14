@@ -42,3 +42,6 @@ vim.opt.splitbelow = true
 vim.opt.completeopt="menu"
 
 vim.o.termguicolors = true
+
+vim.cmd("highlight clear StatusLine")
+vim.opt.laststatus = 0
