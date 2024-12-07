@@ -130,3 +130,10 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 alias ya='~/ydbwork/ydb/ya'
 alias mem='watch -n1 du -h .'
+
+# The next line updates PATH for CLI.
+if [ -f '/Users/phill/yandex-cloud/path.bash.inc' ]; then source '/Users/phill/yandex-cloud/path.bash.inc'; fi
+
+# The next line enables shell command completion for yc.
+if [ -f '/Users/phill/yandex-cloud/completion.zsh.inc' ]; then source '/Users/phill/yandex-cloud/completion.zsh.inc'; fi
+

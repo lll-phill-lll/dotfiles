@@ -23,7 +23,7 @@ lines = 40
 [ font ]
 normal.family = "Hack Nerd Font"
 
-size = 22
+size = 16
 offset.x = 0
 offset.y = 0
 

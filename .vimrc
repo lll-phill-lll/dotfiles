@@ -11,11 +11,11 @@ Plug 'bfrg/vim-cpp-modern'
 
 call plug#end()
 
-
 colorscheme gruvbox
 
 let g:gruvbox_contrast_dark='hard'
 let g:gruvbox_contrast_light='hard'
+
 
 " Default settings:
 " -------------------------------------
@@ -30,6 +30,9 @@ set splitbelow
 " for fuzzy file search
 set path+=**
 set wildmenu
+
+nnoremap <leader>rev viw<Esc>g?iw<Esc>
+
 
 set foldmethod=indent
 set foldlevel=99
