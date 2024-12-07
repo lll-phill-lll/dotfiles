@@ -270,7 +270,7 @@ autocmd BufRead,BufNewFile ~/discclub set filetype=markdown
 autocmd FileType tex,latex,markdown set spell spelllang=ru,en
 
 " remove trailing spaces while saving
-autocmd BufWritePre * %s/\s\+$//e
+" autocmd BufWritePre * %s/\s\+$//e
 
 function! MakeClangFormat()
   if &modified && !empty(findfile('.clang-format', expand('%:p:h') . ';'))

@@ -110,7 +110,6 @@ export PATH="$PATH:/home/mfilitov/.local/bin/"
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
-alias ctags="`brew --prefix`/bin/ctags"
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
@@ -119,14 +118,33 @@ export PATH="/usr/local/opt/llvm/bin:$PATH"
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
 alias gotools="cd /home/mfilitov/ydbwork/ydb/ydb/library/yql/tools"
-alias ya='~/ydbwork/ydb/ya'
+# alias ya='~/ydbwork/ydb/ya'
 alias syncrepo="gh repo sync lll-phill-lll/ydb -s ydb-platform/ydb"
 alias dqrun="./dqrun -s -p query.sql --enable-spilling --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json --udfs-dir ../../udfs/common/"
 alias dqrunnospilling="./dqrun -s -p query.sql --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json"
 alias gdbdqrun="gdb --args ./dqrun -s -p query.sql --enable-spilling  --gateways-cfg examples/gateways.conf --fs-cfg examples/fs.conf --bindings-file examples/bindings_tpch.json --udfs-dir ../../udfs/common/"
+
+alias ya="~/arcadia/ya"
 alias ym="ya make -d"
+
+alias k='kubectl'
+alias kc='kubectl config get-contexts'
+alias kx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config current-context ; } ; f'
+alias kn='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl config view --minify | grep namespace | cut -d" " -f6 ; } ; f'
+
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-alias ya='~/ydbwork/ydb/ya'
 alias mem='watch -n1 du -h .'
+
+if [[ -S "$SSH_AUTH_SOCK" && ! -h "$SSH_AUTH_SOCK" ]]; then
+    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock;
+fi
+export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock;
+
+
+. "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

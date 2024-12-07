@@ -116,8 +116,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
+
 SHELL=/usr/bin/zsh
-. "$HOME/.cargo/env"
 
 if [ -z "${NOZSH}" ] && [ $TERM = "xterm" -o $TERM = "xterm-256color" -o $TERM = "screen" ] && type zsh &> /dev/null
 then
@@ -129,3 +129,9 @@ then
         exec zsh
     fi
 fi
+
+[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+eval "$(atuin init bash)"
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+. "$HOME/.cargo/env"

@@ -1,6 +1,6 @@
 vim.o.background = 'dark'
 
-vim.cmd([[colorscheme gruvbox]])
+vim.cmd([[colorscheme tokyonight-storm]])
 
 -- Always use rectangle as a cursor
 vim.opt.guicursor = ""
@@ -44,4 +44,7 @@ vim.opt.completeopt="menu"
 vim.o.termguicolors = true
 
 vim.cmd("highlight clear StatusLine")
-vim.opt.laststatus = 0
+-- vim.opt.laststatus = 0
+
+-- allow trailing spaces https://www.reddit.com/r/neovim/comments/17ak2eq/neovim_is_automatically_removing_trailing/
+vim.g.editorconfig = false

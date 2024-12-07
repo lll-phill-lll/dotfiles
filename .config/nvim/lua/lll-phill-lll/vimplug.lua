@@ -9,6 +9,8 @@ Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
 
 -- Gruvbox (colorscheme)
 Plug('ellisonleao/gruvbox.nvim')
+-- TokioNight (colorscheme)
+Plug('folke/tokyonight.nvim')
 
 -- Treesitter (better syntax highlighting)
 Plug('nvim-treesitter/nvim-treesitter', { ['do'] = function()
@@ -26,5 +28,13 @@ Plug('nvim-treesitter/nvim-treesitter-context')
 
 -- Move across objects easely
 Plug('nvim-treesitter/nvim-treesitter-textobjects')
+
+Plug('karb94/neoscroll.nvim')
+
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
 
 vim.call('plug#end')

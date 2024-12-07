@@ -40,21 +40,38 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>hh', '<cmd>ClangdSwitchSourceHeader<CR>', opts)
 end
 
+local compile_commands_dir = '.'
+
+local get_compile_commands_dir = function(client)
+    local path = client.workspace_folders[1].name
+    if string.find(path, "arcadia") then
+        compile_commands_dir = "/home/mfilitov/yqllib"
+        return
+    end
+
+    if string.find(path, "library") then
+        compile_commands_dir = "/home/mfilitov/dqlib"
+        return
+    end
+end
+
 lspconfig.clangd.setup {
+    -- on_init = get_compile_commands_dir,
     on_attach = on_attach,
     cmd = {
         "clangd",
+        -- "--compile-commands-dir=/home/mfilitov/yqllib",
         "--background-index",
         "--pch-storage=memory",
         "--all-scopes-completion",
         "--pretty",
         "--header-insertion=never",
         "-j=32",
-        "--inlay-hints",
         "--header-insertion-decorators",
         "--function-arg-placeholders",
         "--completion-style=detailed",
         "--clang-tidy"
     },
+    init_options = { provideFormatter = false },
 }
 
