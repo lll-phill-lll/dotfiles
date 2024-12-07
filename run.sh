@@ -30,6 +30,8 @@ if [ ${machine} == "Mac" ]; then
     # to revert:
     # defaults delete com.apple.Dock appswitcher-all-displays; killall Dock
 
+    brew install atuin
+
     # TODO
 elif [ ${machine} == "Linux" ]; then
     sudo apt update
