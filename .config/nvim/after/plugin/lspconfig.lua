@@ -40,38 +40,50 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>hh', '<cmd>ClangdSwitchSourceHeader<CR>', opts)
 end
 
-local compile_commands_dir = '.'
 
-local get_compile_commands_dir = function(client)
-    local path = client.workspace_folders[1].name
-    if string.find(path, "arcadia") then
-        compile_commands_dir = "/home/mfilitov/yqllib"
-        return
-    end
+local lspconfig = require('lspconfig')
 
-    if string.find(path, "library") then
-        compile_commands_dir = "/home/mfilitov/dqlib"
-        return
-    end
+local compile_commands_map = {
+    ["yql/essentials"] = "yql",
+    ["ydb/library/yql"] = "dq",
+    ["ydb/core/kqp"] = "kqp",
+}
+
+local function compile_commands_path_by_name(name)
+    return "/home/mfilitov/compile_commands/" .. name
 end
 
-lspconfig.clangd.setup {
-    -- on_init = get_compile_commands_dir,
+local function get_compile_commands_dir(filename)
+    local path = vim.fn.expand(filename)
+
+    for prefix, compile_dir in pairs(compile_commands_map) do
+        if string.find(path, prefix, 1, true) then
+            return compile_commands_path_by_name(compile_dir)
+        end
+    end
+
+    return compile_commands_path_by_name("yql")
+end
+
+lspconfig.clangd.setup({
     on_attach = on_attach,
-    cmd = {
-        "clangd",
-        -- "--compile-commands-dir=/home/mfilitov/yqllib",
-        "--background-index",
-        "--pch-storage=memory",
-        "--all-scopes-completion",
-        "--pretty",
-        "--header-insertion=never",
-        "-j=32",
-        "--header-insertion-decorators",
-        "--function-arg-placeholders",
-        "--completion-style=detailed",
-        "--clang-tidy"
-    },
-    init_options = { provideFormatter = false },
-}
+    -- Корневая директория теперь будет определяться с использованием префикса
+    on_new_config = function(new_config, new_root_dir)
+        local compile_commands_dir = get_compile_commands_dir(new_root_dir)
+        new_config.cmd = {
+            "clangd",
+            "--compile-commands-dir=" .. compile_commands_dir,
+            "--background-index",
+            "--pch-storage=memory",
+            "--all-scopes-completion",
+            "--pretty",
+            "--header-insertion=never",
+            "-j=32",
+            "--header-insertion-decorators",
+            "--function-arg-placeholders",
+            "--completion-style=detailed",
+            "--clang-tidy"
+        }
+    end,
+})
 
