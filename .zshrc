@@ -89,6 +89,11 @@ source $ZSH/oh-my-zsh.sh
 export PATH="$PATH:/opt/nvim-linux64/bin"
 export PATH="$PATH:/home/mfilitov/.local/bin/"
 
+
+export PATH="$PATH:/home/mfilitov/ydbwork/ydb/ydb/tools/ydbd_slice/bin"
+export PATH="$PATH:/home/mfilitov/ydbwork/ydb/ydb/apps/ydb"
+
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -136,6 +141,10 @@ alias kn='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 alias mem='watch -n1 du -h .'
+
+alias make_slice="/usr/bin/ya make ~/ydbwork/ydb/ydb/tools/ydbd_slice/bin"
+alias make_ydb="/usr/bin/ya make ~/ydbwork/ydb/ydb/apps/ydb"
+alias make_ydbd="/usr/bin/ya make ~/ydbwork/ydb/ydb/apps/ydbd -j 50" 
 
 if [[ -S "$SSH_AUTH_SOCK" && ! -h "$SSH_AUTH_SOCK" ]]; then
     ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock;

@@ -34,6 +34,16 @@ silentNoremap('n', '<leader>0', ':tablast<CR>')
 
 silentNoremap('n', '<leader>rr', '<cmd>source ~/.config/nvim/init.lua<CR>')
 
+-- In insert or command mode, move normally by using Ctrl
+silentNoremap('i', '<C-h>', '<Left>')
+silentNoremap('i', '<C-j>', '<Down>')
+silentNoremap('i', '<C-k>', '<Up>')
+silentNoremap('i', '<C-l>', '<Right>')
+silentNoremap('c', '<C-h>', '<Left>')
+silentNoremap('c', '<C-j>', '<Down>')
+silentNoremap('c', '<C-k>', '<Up>')
+silentNoremap('c', '<C-l>', '<Right>')
+
 -- Move highlighted group
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
