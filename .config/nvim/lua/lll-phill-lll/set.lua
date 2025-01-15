@@ -1,6 +1,6 @@
 vim.o.background = 'dark'
 
-vim.cmd([[colorscheme tokyonight-night]])
+vim.cmd([[colorscheme tokyonight-storm]])
 
 -- Always use rectangle as a cursor
 vim.opt.guicursor = ""

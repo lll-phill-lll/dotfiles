@@ -44,6 +44,10 @@ silentNoremap('c', '<C-j>', '<Down>')
 silentNoremap('c', '<C-k>', '<Up>')
 silentNoremap('c', '<C-l>', '<Right>')
 
+-- move half-screen usign ctrl+j/k
+silentNoremap('n', '<C-j>', '<C-d>')
+silentNoremap('n', '<C-k>', '<C-u>')
+
 -- Move highlighted group
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
