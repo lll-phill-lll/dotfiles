@@ -1,6 +1,12 @@
 vim.o.background = 'dark'
 
+require("tokyonight").setup({
+transparent = true,
+tokyonight_dark_float = false;
+})
+
 vim.cmd([[colorscheme tokyonight-storm]])
+vim.g.tokyonight_dark_float = false
 
 -- Always use rectangle as a cursor
 vim.opt.guicursor = ""
