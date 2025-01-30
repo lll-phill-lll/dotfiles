@@ -71,18 +71,17 @@ lspconfig.clangd.setup({
     on_new_config = function(new_config, new_root_dir)
         local compile_commands_dir = get_compile_commands_dir(new_root_dir)
         new_config.cmd = {
-            "clangd",
+            "/home/mfilitov/clangd-new/clangd_19.1.2/bin/clangd",
             "--compile-commands-dir=" .. compile_commands_dir,
             "--background-index",
             "--pch-storage=memory",
             "--all-scopes-completion",
             "--pretty",
             "--header-insertion=never",
-            "-j=32",
+            "-j=64",
             "--header-insertion-decorators",
             "--function-arg-placeholders",
             "--completion-style=detailed",
-            "--clang-tidy"
         }
     end,
 })

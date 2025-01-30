@@ -54,4 +54,5 @@ vim.cmd("highlight clear StatusLine")
 
 -- allow trailing spaces https://www.reddit.com/r/neovim/comments/17ak2eq/neovim_is_automatically_removing_trailing/
 vim.g.editorconfig = false
-vim.opt.signcolumn = "no"
+-- show signs (marks in my case) in numbers column
+vim.opt.signcolumn = "number"
