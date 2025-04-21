@@ -14,7 +14,7 @@ option_as_alt = "Both"
 
 # Maximized Fullscreen Windowed
 # macos only SimpleFullscreen
-startup_mode = "SimpleFullscreen"
+startup_mode = "Fullscreen"
 
 [ window.dimensions ]
 columns = 133

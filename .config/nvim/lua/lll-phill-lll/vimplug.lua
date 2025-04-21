@@ -5,7 +5,10 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 
 -- Telescope (fuzzy finder)
 Plug('nvim-lua/plenary.nvim')
-Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.6' })
+Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.8' })
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
 -- Gruvbox (colorscheme)
 Plug('ellisonleao/gruvbox.nvim')

@@ -67,12 +67,12 @@ end
 
 lspconfig.clangd.setup({
     on_attach = on_attach,
-    -- Корневая директория теперь будет определяться с использованием префикса
     on_new_config = function(new_config, new_root_dir)
         local compile_commands_dir = get_compile_commands_dir(new_root_dir)
         new_config.cmd = {
-            "/home/mfilitov/clangd-new/clangd_19.1.2/bin/clangd",
-            "--compile-commands-dir=" .. compile_commands_dir,
+            "clangd",
+            -- "/home/mfilitov/clangd-new/clangd_19.1.2/bin/clangd",
+            -- "--compile-commands-dir=" .. compile_commands_dir,
             "--background-index",
             "--pch-storage=memory",
             "--all-scopes-completion",

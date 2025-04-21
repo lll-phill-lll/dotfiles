@@ -56,3 +56,7 @@ vim.cmd("highlight clear StatusLine")
 vim.g.editorconfig = false
 -- show signs (marks in my case) in numbers column
 vim.opt.signcolumn = "number"
+
+vim.cmd([[
+  set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+]])
