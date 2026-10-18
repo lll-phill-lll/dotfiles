@@ -16,6 +16,8 @@ Usage: ./run.sh [options]
 
 Environment:
   TMUX_VERSION      tmux release to install from GitHub (default: 3.8)
+
+Conflicting configs are moved to ~/old_configs/<unique-run>/ before linking.
 EOF
 }
 
@@ -82,12 +84,85 @@ stow_configs() (
     printf '+ stow'
     printf ' %q' "${stow_args[@]}"
     printf '\n'
-    stow "${stow_args[@]}"
+    LC_ALL=C stow "${stow_args[@]}"
 )
 
-# Check conflicts before package installation when Stow is already available.
+# Let Stow identify conflicts so its ignore rules and existing links are
+# respected. Accept known Stow 2.3/2.4 messages; other errors abort unchanged.
+backup_dir=
+prepare_stow() {
+    local move_conflicts=$1 output line relative destination
+    local -a conflicts
+    while true; do
+        if output=$(stow_configs --simulate 2>&1); then
+            printf '%s\n' "$output"
+            return 0
+        fi
+        printf '%s\n' "$output"
+        conflicts=()
+        while IFS= read -r line; do
+            case "$line" in
+                '  * existing target is neither a link nor a directory: '*|'  * existing target is not owned by stow: '*)
+                    relative=${line#*: }
+                    ;;
+                '  * existing target is stowed to a different package: '*)
+                    relative=${line#*: }
+                    relative=${relative%% => *}
+                    ;;
+                '  * cannot stow non-directory '*' over existing directory target '*|'  * cannot stow directory '*' over existing non-directory target '*)
+                    relative=${line##* target }
+                    ;;
+                '  * cannot stow '*' over existing target '*' since neither a link nor a directory and --adopt not specified')
+                    relative=${line#* over existing target }
+                    relative=${relative% since neither a link nor a directory and --adopt not specified}
+                    ;;
+                '  * '*) die "Cannot automatically resolve Stow conflict: $line" ;;
+                *) continue ;;
+            esac
+            case "$relative" in
+                ''|.|..|/*|../*|*/../*|*/..|./*|*/./*|*/.)
+                    die "Invalid Stow conflict path: $relative"
+                    ;;
+            esac
+            if { [ ! -e "$HOME/$relative" ] && [ ! -L "$HOME/$relative" ]; } ||
+               { [ ! -e "$repo_dir/$relative" ] && [ ! -L "$repo_dir/$relative" ]; } ||
+               [ "$HOME/$relative" -ef "$repo_dir/$relative" ]; then
+                die "Cannot safely back up Stow conflict: $relative"
+            fi
+            conflicts+=("$relative")
+        done <<< "$output"
+        [ "${#conflicts[@]}" -gt 0 ] || die 'Stow failed without a recognized target conflict'
+
+        if ! "$move_conflicts"; then
+            for relative in "${conflicts[@]}"; do
+                printf 'Will back up: %s -> %s/old_configs/<unique-run>/%s\n' "$HOME/$relative" "$HOME" "$relative"
+            done
+            return 0
+        fi
+
+        if [ -z "$backup_dir" ]; then
+            if [ -L "$HOME/old_configs" ] || { [ -e "$HOME/old_configs" ] && [ ! -d "$HOME/old_configs" ]; }; then
+                die "$HOME/old_configs must be a regular directory"
+            fi
+            run mkdir -p "$HOME/old_configs"
+            backup_dir=$(mktemp -d "$HOME/old_configs/$(date +%Y%m%d-%H%M%S).XXXXXX")
+            printf 'Backing up conflicting configs to %s\n' "$backup_dir"
+        fi
+        for relative in "${conflicts[@]}"; do
+            destination="$backup_dir/$relative"
+            if [ -e "$destination" ] || [ -L "$destination" ]; then
+                die "Backup already exists: $destination"
+            fi
+            run mkdir -p "$(dirname -- "$destination")"
+            run mv -- "$HOME/$relative" "$destination"
+        done
+        # Removing a conflicting parent can reveal new paths on the next pass.
+    done
+}
+
+# Preview backups before packages; move files only immediately before linking.
 if command -v stow >/dev/null 2>&1; then
-    stow_configs --simulate
+    prepare_stow false
 elif "$skip_packages"; then
     die 'Stow is required with --skip-packages'
 fi
@@ -169,11 +244,11 @@ if ! "$dry_run"; then
     fi
 fi
 
-# Stow refuses conflicts instead of adopting files into the repository.
+# Keep old configs outside the repository, then let Stow create the links.
 if "$dry_run"; then
     printf '+ stow configs into %s (simulation)\n' "$HOME"
 else
-    stow_configs --simulate
+    prepare_stow true
     stow_configs
     # Stow can return success after skipping a target; verify the key links
     # before claiming that shell/editor configs are ready.

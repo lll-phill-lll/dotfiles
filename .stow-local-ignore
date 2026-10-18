@@ -1,5 +1,6 @@
 # Repository metadata and installer files are not home-directory configs.
 ^/old
+^/old_configs
 ^/tests
 ^/run\.sh
 ^/README.*

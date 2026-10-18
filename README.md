@@ -38,8 +38,16 @@ TMUX_VERSION=3.7c ./run.sh
 
 `--skip-packages` also skips building tmux and uses the existing installation.
 
-Stow checks for conflicts before linking and, when already available, before
-installing packages. Existing files are never adopted into this repository.
+Stow checks for conflicts before linking and, when already available, previews
+them before installing packages. Conflicting files, directories, and symlinks
+are automatically moved into `~/old_configs/<timestamp>.<unique-suffix>/`
+immediately before linking. Their paths are preserved, for example
+`~/.bashrc` becomes `~/old_configs/<run>/.bashrc`, and a conflicting
+`~/.config/nvim/init.lua` becomes `~/old_configs/<run>/.config/nvim/init.lua`.
+Each run uses a fresh backup directory so previous backups are never overwritten.
+Unrelated configs and existing correct links stay in place. A dry run only
+prints the planned backups and does not create `~/old_configs` or move files.
+Existing files are never adopted into this repository.
 Stow creates symbolic links in your home directory, for example
 `~/.bashrc -> /path/to/dotfiles/.bashrc`; the original files stay in the repository.
 The repository is passed as Stow package `.` with its own directory as `--dir`,
@@ -49,9 +57,9 @@ The installer prints the Stow commands and link operations. Actual linking runs
 after package installation and tmux building, so an error in those steps stops
 the installer before new links are created. To link configs independently of
 package installation and plugins, use `./run.sh --skip-packages --skip-plugins`.
-If Stow reports a conflict, move the conflicting file to a backup location,
-compare it with the config here, and rerun. A failed run stops immediately;
-packages and configs installed by earlier steps are not rolled back.
+Unrecognized Stow errors stop the installer instead of moving guessed paths.
+A failed run stops immediately; packages and configs installed by earlier steps
+are not rolled back. Any backups already made remain in `~/old_configs`.
 
 Options:
 
