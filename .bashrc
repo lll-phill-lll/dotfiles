@@ -2,6 +2,8 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+export PATH="$HOME/.local/bin:$PATH"
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -117,11 +119,10 @@ if ! shopt -oq posix; then
 fi
 
 
-SHELL=/usr/bin/zsh
-
-if [ -z "${NOZSH}" ] && [ $TERM = "xterm" -o $TERM = "xterm-256color" -o $TERM = "screen" ] && type zsh &> /dev/null
+if [ -z "${NOZSH:-}" ] && [[ ${TERM:-} == xterm || ${TERM:-} == xterm-256color || ${TERM:-} == screen ]] && command -v zsh &> /dev/null
 then
-    export SHELL=$(which zsh)
+    SHELL=$(command -v zsh)
+    export SHELL
     if [[ -o login ]]
     then
         exec zsh -l
@@ -131,7 +132,11 @@ then
 fi
 
 [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
-eval "$(atuin init bash)"
+if command -v atuin >/dev/null 2>&1; then
+    eval "$(atuin init bash)"
+fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-. "$HOME/.cargo/env"
+if [ -f "$HOME/.cargo/env" ]; then
+    . "$HOME/.cargo/env"
+fi

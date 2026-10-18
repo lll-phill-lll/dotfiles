@@ -87,7 +87,7 @@ fi
 source $ZSH/oh-my-zsh.sh
 
 export PATH="$PATH:/opt/nvim-linux64/bin"
-export PATH="$PATH:/home/mfilitov/.local/bin/"
+export PATH="$HOME/.local/bin:$PATH"
 
 
 export PATH="$PATH:/home/mfilitov/ydbwork/ydb/ydb/tools/ydbd_slice/bin"
@@ -146,14 +146,31 @@ alias make_slice="/usr/bin/ya make ~/ydbwork/ydb/ydb/tools/ydbd_slice/bin"
 alias make_ydb="/usr/bin/ya make ~/ydbwork/ydb/ydb/apps/ydb"
 alias make_ydbd="/usr/bin/ya make ~/ydbwork/ydb/ydb/apps/ydbd -j 50" 
 
-if [[ -S "$SSH_AUTH_SOCK" && ! -h "$SSH_AUTH_SOCK" ]]; then
-    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock;
-fi
-export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock;
+# if [[ -S "$SSH_AUTH_SOCK" && ! -h "$SSH_AUTH_SOCK" ]]; then
+#     ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock;
+# fi
+# export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock;
 
-
-. "$HOME/.atuin/bin/env"
-
-eval "$(atuin init zsh)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# The next line updates PATH for CLI.
+if [ -f '/Users/mfilitov/yandex-cloud/path.bash.inc' ]; then source '/Users/mfilitov/yandex-cloud/path.bash.inc'; fi
+
+# The next line enables shell command completion for yc.
+if [ -f '/Users/mfilitov/yandex-cloud/completion.zsh.inc' ]; then source '/Users/mfilitov/yandex-cloud/completion.zsh.inc'; fi
+
+
+# The next line updates PATH for Yandex Cloud Private CLI.
+if [ -f '/Users/mfilitov/ycp/path.bash.inc' ]; then source '/Users/mfilitov/ycp/path.bash.inc'; fi
+
+[[ "$TERM" == "xterm-kitty" ]] && alias ssh="TERM=xterm-256color ssh"
+
+alias ya='~/ydbwork/ydb/ya'
+export PATH="/opt/homebrew/Cellar/qemu/10.0.2/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+ssh-add ~/.ssh/id_ed25519

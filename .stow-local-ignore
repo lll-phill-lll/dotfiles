@@ -1,2 +1,16 @@
-old/
-.git
+# Repository metadata and installer files are not home-directory configs.
+^/old
+^/tests
+^/run\.sh
+^/README.*
+^/AGENTS\.md
+\.git
+\.gitignore
+\.gitmodules
+\.stowrc
+\.DS_Store
+\.nvimlog
+\.histories
+plugged
+.*~
+.*\.swp

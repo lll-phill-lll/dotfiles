@@ -7,18 +7,13 @@ vim.call('plug#begin', '~/.config/nvim/plugged')
 Plug('nvim-lua/plenary.nvim')
 Plug('nvim-telescope/telescope.nvim', { ['tag'] = '0.1.8' })
 
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
-
 -- Gruvbox (colorscheme)
 Plug('ellisonleao/gruvbox.nvim')
 -- TokioNight (colorscheme)
 Plug('folke/tokyonight.nvim')
 
 -- Treesitter (better syntax highlighting)
-Plug('nvim-treesitter/nvim-treesitter', { ['do'] = function()
-  vim.fn['TSUpdate']()
-end })
+Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
 
 -- Show the tree of all changes. Persistent storage (undo also after nvim reload)
 Plug('mbbill/undotree')

@@ -60,3 +60,42 @@ vim.opt.signcolumn = "number"
 vim.cmd([[
   set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 ]])
+
+
+if vim.g.neovide then
+  vim.g.neovide_opacity = 0.85
+  vim.g.neovide_input_macos_option_key_is_meta = "both"
+  vim.o.guifont = "Iosevka"
+  vim.opt.clipboard = "unnamedplus"
+  vim.g.neovide_macos_simple_fullscreen = true
+end
+if vim.g.neovide then
+  vim.keymap.set({ "n", "v" }, "<D-v>", '"+p', { silent = true })
+  vim.keymap.set("i", "<D-v>", '<C-r>+', { silent = true })
+  vim.keymap.set("c", "<D-v>", '<C-r>+', { silent = true })
+
+  vim.keymap.set({ "n", "v" }, "<D-c>", '"+y')
+  vim.keymap.set("i", "<D-c>", '<Esc>"+yiw', { silent = true })
+    vim.g.neovide_scale_factor = 1.0
+
+  local function scale(delta)
+    vim.g.neovide_scale_factor = (vim.g.neovide_scale_factor or 1.0) * delta
+  end
+
+  -- На macOS "+" = Shift + "=" → маппим оба варианта
+  vim.keymap.set("n", "<D-=>", function() scale(1.10) end, { silent = true })
+  vim.keymap.set("n", "<D-S-=>", function() scale(1.10) end, { silent = true })
+  vim.keymap.set("n", "<D-->", function() scale(1/1.10) end, { silent = true })
+  vim.keymap.set("n", "<D-0>", function() vim.g.neovide_scale_factor = 1.0 end, { silent = true })
+end
+
+vim.keymap.set("n", "<D-t>", function()
+  if vim.bo.buftype == "terminal" then
+    vim.cmd("bd!")
+  else
+    vim.cmd("split | terminal")
+  end
+end)
+
+
+
