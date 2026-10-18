@@ -8,6 +8,7 @@ usage() {
     cat <<'EOF'
 Usage: ./run.sh [options]
   --dry-run         Print commands without installing or changing anything
+  --force           Reinstall packages, rebuild tmux, restow and reinstall plugins
   --skip-packages   Use already installed dependencies
   --skip-plugins    Only install packages and link configs (no network clones)
   --change-shell    Set zsh as the login shell
@@ -22,6 +23,7 @@ EOF
 }
 
 dry_run=false
+force=false
 skip_packages=false
 skip_plugins=false
 change_shell=false
@@ -29,6 +31,7 @@ macos_defaults=false
 for arg in "$@"; do
     case "$arg" in
         --dry-run) dry_run=true ;;
+        --force) force=true ;;
         --skip-packages) skip_packages=true ;;
         --skip-plugins) skip_plugins=true ;;
         --change-shell) change_shell=true ;;
@@ -52,7 +55,29 @@ run() {
 
 require() { command -v "$1" >/dev/null 2>&1 || die "Required command not found: $1"; }
 
+install_brew_packages() {
+    local kind=$1 package
+    shift
+    if ! "$force"; then
+        run brew install "$kind" "$@"
+        return
+    fi
+    for package in "$@"; do
+        if "$dry_run"; then
+            printf '+ brew reinstall %q %q (install if absent)\n' "$kind" "$package"
+        elif brew list "$kind" --versions "$package" >/dev/null 2>&1; then
+            run env HOMEBREW_NO_ASK=1 brew reinstall "$kind" "$package"
+        else
+            run brew install "$kind" "$package"
+        fi
+    done
+}
+
 repo_dir=$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+# Catch incomplete checkouts before installing packages or moving old configs.
+for config in .config/nvim/lua/lll-phill-lll/treesitter.lua .config/atuin/config.toml; do
+    [ -f "$repo_dir/$config" ] || die "Required config is missing from the repository: $config. Transfer all new files before running the installer."
+done
 os=$(uname -s)
 case "$os" in
     Darwin) ;;
@@ -81,6 +106,7 @@ stow_configs() (
     # Treat the repository itself as package ".". Using its parent as the
     # Stow directory would equal the target for ~/dotfiles and skip all files.
     stow_args=(--no-folding --verbose --dir="$repo_dir" --target="$HOME" "$@" .)
+    if "$force"; then stow_args=(--restow "${stow_args[@]}"); fi
     printf '+ stow'
     printf ' %q' "${stow_args[@]}"
     printf '\n'
@@ -90,8 +116,35 @@ stow_configs() (
 # Let Stow identify conflicts so its ignore rules and existing links are
 # respected. Accept known Stow 2.3/2.4 messages; other errors abort unchanged.
 backup_dir=
+ensure_backup_dir() {
+    if [ -n "$backup_dir" ]; then return; fi
+    if [ -L "$HOME/old_configs" ] || { [ -e "$HOME/old_configs" ] && [ ! -d "$HOME/old_configs" ]; }; then
+        die "$HOME/old_configs must be a regular directory"
+    fi
+    run mkdir -p "$HOME/old_configs"
+    backup_dir=$(mktemp -d "$HOME/old_configs/$(date +%Y%m%d-%H%M%S).XXXXXX")
+    printf 'Backing up previous files to %s\n' "$backup_dir"
+}
+
+# Call only with the fixed installer paths below or validated Stow conflicts.
+backup_existing() {
+    local relative=$1 destination
+    if [ ! -e "$HOME/$relative" ] && [ ! -L "$HOME/$relative" ]; then return; fi
+    if "$dry_run"; then
+        printf 'Will back up: %s -> %s/old_configs/<unique-run>/%s\n' "$HOME/$relative" "$HOME" "$relative"
+        return
+    fi
+    ensure_backup_dir
+    destination="$backup_dir/$relative"
+    if [ -e "$destination" ] || [ -L "$destination" ]; then
+        die "Backup already exists: $destination"
+    fi
+    run mkdir -p "$(dirname -- "$destination")"
+    run mv -- "$HOME/$relative" "$destination"
+}
+
 prepare_stow() {
-    local move_conflicts=$1 output line relative destination
+    local move_conflicts=$1 output line relative
     local -a conflicts
     while true; do
         if output=$(stow_configs --simulate 2>&1); then
@@ -140,21 +193,8 @@ prepare_stow() {
             return 0
         fi
 
-        if [ -z "$backup_dir" ]; then
-            if [ -L "$HOME/old_configs" ] || { [ -e "$HOME/old_configs" ] && [ ! -d "$HOME/old_configs" ]; }; then
-                die "$HOME/old_configs must be a regular directory"
-            fi
-            run mkdir -p "$HOME/old_configs"
-            backup_dir=$(mktemp -d "$HOME/old_configs/$(date +%Y%m%d-%H%M%S).XXXXXX")
-            printf 'Backing up conflicting configs to %s\n' "$backup_dir"
-        fi
         for relative in "${conflicts[@]}"; do
-            destination="$backup_dir/$relative"
-            if [ -e "$destination" ] || [ -L "$destination" ]; then
-                die "Backup already exists: $destination"
-            fi
-            run mkdir -p "$(dirname -- "$destination")"
-            run mv -- "$HOME/$relative" "$destination"
+            backup_existing "$relative"
         done
         # Removing a conflicting parent can reveal new paths on the next pass.
     done
@@ -186,11 +226,13 @@ fi
 printf 'Installing configs for %s from %s\n' "$os" "$repo_dir"
 if ! "$skip_packages"; then
     if [ "$os" = Darwin ]; then
-        run brew install neovim vim stow git curl zsh ripgrep clang-format atuin libevent ncurses utf8proc jemalloc pkgconf bison tree-sitter-cli
-        run brew install --cask alacritty font-hack-nerd-font
+        install_brew_packages --formula neovim vim stow git curl zsh ripgrep clang-format atuin libevent ncurses utf8proc jemalloc pkgconf bison tree-sitter-cli
+        install_brew_packages --cask alacritty font-hack-nerd-font
     else
         run sudo apt-get update
-        run sudo apt-get install -y vim stow git curl wget zsh ripgrep clang-format build-essential ca-certificates libevent-dev libncurses-dev bison pkg-config
+        apt_install_args=(-y)
+        if "$force"; then apt_install_args+=(--reinstall); fi
+        run sudo apt-get install "${apt_install_args[@]}" vim stow git curl wget zsh ripgrep clang-format build-essential ca-certificates libevent-dev libncurses-dev bison pkg-config
         run curl -fL --retry 3 -o "$temp_dir/nvim.tar.gz" \
             "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-${nvim_arch}.tar.gz"
         # Keep the location already used by .zshrc, regardless of archive layout.
@@ -212,7 +254,7 @@ if ! "$skip_packages"; then
         run install -m 755 "$temp_dir/atuin/atuin" "$HOME/.local/bin/atuin"
     fi
 
-    if [ -x "$tmux_prefix/bin/tmux" ] && [ "$("$tmux_prefix/bin/tmux" -V)" = "tmux $tmux_version" ]; then
+    if ! "$force" && [ -x "$tmux_prefix/bin/tmux" ] && [ "$("$tmux_prefix/bin/tmux" -V)" = "tmux $tmux_version" ]; then
         printf 'tmux %s is already installed in %s\n' "$tmux_version" "$tmux_prefix"
     else
         # Release tarballs include configure, so autoconf/automake are not needed.
@@ -265,7 +307,7 @@ else
     stow_configs
     # Stow can return success after skipping a target; verify the key links
     # before claiming that shell/editor configs are ready.
-    for config in .bashrc .bash_profile .zshrc .tmux.conf .config/nvim/init.lua .config/atuin/config.toml; do
+    for config in .bashrc .bash_profile .zshrc .tmux.conf .config/nvim/init.lua .config/nvim/lua/lll-phill-lll/treesitter.lua .config/atuin/config.toml; do
         if [ "$HOME/$config" -ef "$repo_dir/$config" ]; then
             printf 'Config linked: %s\n' "$HOME/$config"
         else
@@ -276,10 +318,15 @@ else
 fi
 
 if ! "$skip_plugins"; then
-    if [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
+    if "$force"; then
+        for plugin_dir in .oh-my-zsh .tmux/plugins .vim/plugged .config/nvim/plugged; do
+            backup_existing "$plugin_dir"
+        done
+    fi
+    if "$force" || [ ! -f "$HOME/.oh-my-zsh/oh-my-zsh.sh" ]; then
         run git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
     fi
-    if [ ! -f "$HOME/.tmux/plugins/tpm/tpm" ]; then
+    if "$force" || [ ! -f "$HOME/.tmux/plugins/tpm/tpm" ]; then
         run git clone --depth=1 https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
     fi
 
