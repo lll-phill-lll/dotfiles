@@ -30,6 +30,17 @@ binary into `~/.local/bin`. The installer updates the three affected plugins,
 waits for parser installation, and checks normal Neovim startup before proceeding
 to tmux plugins. Lua startup errors stop installation even when Neovim returns 0.
 Plugin installation runs separately from user `after/plugin` configuration.
+The parser list includes assembly (`asm`), and `.S`/`.s` files use that filetype.
+Missing supported parsers are installed automatically when their filetype is
+opened: Nvim 0.11 uses Treesitter's `auto_install`, while Nvim 0.12 installs in
+the background and enables highlighting in matching open buffers when ready.
+Unsupported filetypes do not trigger downloads. Auto-installation requires the
+same network access and build tools as the initial parser installation.
+Plugin failures are detected from vim-plug's failure list; suppressed internal
+errors in `v:errmsg` do not fail a successful plugin installation. Parser and
+normal Neovim startup checks still detect Lua errors. Failed commands print
+their full arguments and exit code; editor failures also print the last 100
+lines of the verbose editor log before temporary files are cleaned up.
 
 tmux is pinned to **3.8**, the latest stable release checked on 2026-10-18.
 The installer downloads the release tarball from

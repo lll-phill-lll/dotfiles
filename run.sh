@@ -50,7 +50,15 @@ run() {
     printf '+'
     printf ' %q' "$@"
     printf '\n'
-    if ! "$dry_run"; then "$@"; fi
+    if "$dry_run"; then return; fi
+    local command_status=0
+    "$@" || command_status=$?
+    if [ "$command_status" -ne 0 ]; then
+        printf 'Command failed (exit %s):' "$command_status" >&2
+        printf ' %q' "$@" >&2
+        printf '\n' >&2
+        exit "$command_status"
+    fi
 }
 
 require() { command -v "$1" >/dev/null 2>&1 || die "Required command not found: $1"; }
@@ -208,8 +216,14 @@ elif "$skip_packages"; then
 fi
 
 temp_dir=
+editor_log=
 cleanup() {
+    local exit_status=$?
     if [ -n "$temp_dir" ] && ! "$dry_run"; then
+        if [ "$exit_status" -ne 0 ] && [ -n "$editor_log" ] && [ -f "$editor_log" ]; then
+            printf '\nLast editor messages (%s):\n' "$editor_log" >&2
+            tail -n 100 "$editor_log" >&2 || true
+        fi
         if [ -S "$temp_dir/tmux.sock" ]; then
             tmux -S "$temp_dir/tmux.sock" kill-server || true
         fi
@@ -347,22 +361,31 @@ lua dofile(vim.env.DOTFILES_DIR .. '/.config/nvim/lua/lll-phill-lll/vimplug.lua'
 EOF
     fi
     export DOTFILES_DIR="$repo_dir"
-    # vim-plug reports clone and hook errors in its buffer without a failing
-    # process status. Propagate those errors to the installer as well.
-    plug_check='if search("^x ", "nw") || !empty(v:errmsg) | %print | echo v:errmsg | cquit | endif'
-    run vim -N -u "$temp_dir/vimrc" -i NONE -n -es -c 'PlugInstall --sync' -c "$plug_check" -c 'qall'
+    # vim-plug marks clone/hook failures with "x " in its buffer. v:errmsg
+    # also contains errors suppressed by its normal silent! unmap operations,
+    # so it cannot indicate whether PlugInstall/PlugUpdate succeeded.
+    plug_check='if search("^x ", "nw") | %print | cquit | endif'
+    editor_check='if !empty(v:errmsg) | echo v:errmsg | cquit | endif'
+    editor_log="$temp_dir/vim-install.log"
+    run vim -N --noplugin -V1"$editor_log" -u "$temp_dir/vimrc" -i NONE -n -es \
+        -c 'PlugInstall --sync' -c "$plug_check" -c 'qall'
     # Update the plugins whose API/branch changed, then install the remaining
     # plugins. Keep user after/plugin configs out of this bootstrap process.
-    run nvim --headless --noplugin -u "$temp_dir/init.vim" -i NONE -n \
+    editor_log="$temp_dir/nvim-install.log"
+    run nvim --headless --noplugin -V1"$editor_log" -u "$temp_dir/init.vim" -i NONE -n \
         -c 'PlugUpdate --sync nvim-treesitter nvim-treesitter-textobjects nvim-lspconfig' -c "$plug_check" \
         -c 'PlugInstall --sync' -c "$plug_check" -c 'qall'
     # Use a fresh process after switching branches so cached Lua modules from
     # the previous plugin version cannot leak into parser installation.
-    run nvim --headless -u "$temp_dir/init.vim" -i NONE -n \
-        -c "lua require('lll-phill-lll.treesitter').install()" -c "$plug_check" -c 'qall'
+    editor_log="$temp_dir/nvim-parsers.log"
+    run nvim --headless -V1"$editor_log" -u "$temp_dir/init.vim" -i NONE -n \
+        -c 'let v:errmsg = ""' \
+        -c "lua require('lll-phill-lll.treesitter').install()" -c "$editor_check" -c 'qall'
     # Lua startup errors may still return exit status 0: check v:errmsg too.
-    run nvim --headless -u "$HOME/.config/nvim/init.lua" -i NONE -n \
-        -c "$plug_check" -c 'qall'
+    editor_log="$temp_dir/nvim-startup.log"
+    run nvim --headless -V1"$editor_log" -u "$HOME/.config/nvim/init.lua" -i NONE -n \
+        -c "$editor_check" -c 'qall'
+    editor_log=
 
     # Use a private server so installing TPM plugins works without a running
     # session and does not reload or change the user's existing tmux sessions.
