@@ -76,7 +76,9 @@ fi
 
 stow_configs() (
     cd "$repo_dir"
-    stow_args=(--no-folding --verbose --dir="$repo_dir/.." --target="$HOME" "$@" "${repo_dir##*/}")
+    # Treat the repository itself as package ".". Using its parent as the
+    # Stow directory would equal the target for ~/dotfiles and skip all files.
+    stow_args=(--no-folding --verbose --dir="$repo_dir" --target="$HOME" "$@" .)
     printf '+ stow'
     printf ' %q' "${stow_args[@]}"
     printf '\n'
@@ -173,6 +175,15 @@ if "$dry_run"; then
 else
     stow_configs --simulate
     stow_configs
+    # Stow can return success after skipping a target; verify the key links
+    # before claiming that shell/editor configs are ready.
+    for config in .bashrc .bash_profile .zshrc .tmux.conf .config/nvim/init.lua; do
+        if [ "$HOME/$config" -ef "$repo_dir/$config" ]; then
+            printf 'Config linked: %s\n' "$HOME/$config"
+        else
+            die "Config was not linked: $HOME/$config"
+        fi
+    done
     printf 'Config symlinks are ready in %s\n' "$HOME"
 fi
 

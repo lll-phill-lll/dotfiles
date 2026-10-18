@@ -17,6 +17,8 @@ plugins. Existing Oh My Zsh and TPM installations are reused. Temporary download
 are cleaned up on exit. Neovim on Linux is installed into `/opt/nvim-linux64`,
 the path used by `.zshrc`, using the architecture-specific
 [official release archives](https://github.com/neovim/neovim/blob/master/INSTALL.md).
+Bash and Zsh add `/opt/nvim-linux64/bin` to `PATH` when it exists. Neovim's config
+is `~/.config/nvim` (there is no `~/.nvim` directory); tmux uses `~/.tmux.conf`.
 
 tmux is pinned to **3.8**, the latest stable release checked on 2026-10-18.
 The installer downloads the release tarball from
@@ -40,6 +42,9 @@ Stow checks for conflicts before linking and, when already available, before
 installing packages. Existing files are never adopted into this repository.
 Stow creates symbolic links in your home directory, for example
 `~/.bashrc -> /path/to/dotfiles/.bashrc`; the original files stay in the repository.
+The repository is passed as Stow package `.` with its own directory as `--dir`,
+so placing the checkout directly at `~/dotfiles` is supported. The installer
+verifies the Bash, Zsh, tmux, and Neovim config links before reporting success.
 The installer prints the Stow commands and link operations. Actual linking runs
 after package installation and tmux building, so an error in those steps stops
 the installer before new links are created. To link configs independently of

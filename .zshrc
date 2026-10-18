@@ -86,7 +86,9 @@ fi
 
 source $ZSH/oh-my-zsh.sh
 
-export PATH="$PATH:/opt/nvim-linux64/bin"
+if [ -d /opt/nvim-linux64/bin ]; then
+    export PATH="/opt/nvim-linux64/bin:$PATH"
+fi
 export PATH="$HOME/.local/bin:$PATH"
 
 

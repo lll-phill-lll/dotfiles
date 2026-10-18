@@ -2,6 +2,9 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+if [ -d /opt/nvim-linux64/bin ]; then
+    export PATH="/opt/nvim-linux64/bin:$PATH"
+fi
 export PATH="$HOME/.local/bin:$PATH"
 
 # If not running interactively, don't do anything
