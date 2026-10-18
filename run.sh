@@ -76,7 +76,11 @@ fi
 
 stow_configs() (
     cd "$repo_dir"
-    stow --no-folding --dir="$repo_dir/.." --target="$HOME" "$@" "${repo_dir##*/}"
+    stow_args=(--no-folding --verbose --dir="$repo_dir/.." --target="$HOME" "$@" "${repo_dir##*/}")
+    printf '+ stow'
+    printf ' %q' "${stow_args[@]}"
+    printf '\n'
+    stow "${stow_args[@]}"
 )
 
 # Check conflicts before package installation when Stow is already available.
@@ -169,6 +173,7 @@ if "$dry_run"; then
 else
     stow_configs --simulate
     stow_configs
+    printf 'Config symlinks are ready in %s\n' "$HOME"
 fi
 
 if ! "$skip_plugins"; then

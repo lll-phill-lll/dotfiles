@@ -38,6 +38,12 @@ TMUX_VERSION=3.7c ./run.sh
 
 Stow checks for conflicts before linking and, when already available, before
 installing packages. Existing files are never adopted into this repository.
+Stow creates symbolic links in your home directory, for example
+`~/.bashrc -> /path/to/dotfiles/.bashrc`; the original files stay in the repository.
+The installer prints the Stow commands and link operations. Actual linking runs
+after package installation and tmux building, so an error in those steps stops
+the installer before new links are created. To link configs independently of
+package installation and plugins, use `./run.sh --skip-packages --skip-plugins`.
 If Stow reports a conflict, move the conflicting file to a backup location,
 compare it with the config here, and rerun. A failed run stops immediately;
 packages and configs installed by earlier steps are not rolled back.
