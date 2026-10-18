@@ -20,6 +20,17 @@ the path used by `.zshrc`, using the architecture-specific
 Bash and Zsh add `/opt/nvim-linux64/bin` to `PATH` when it exists. Neovim's config
 is `~/.config/nvim` (there is no `~/.nvim` directory); tmux uses `~/.tmux.conf`.
 
+The Neovim configuration uses native `vim.lsp.config`/`vim.lsp.enable` (Nvim
+0.11.3+). For Treesitter it selects `main` on Nvim 0.12+ and the compatible
+`master` branch on Nvim 0.11, with matching textobjects branches. See the
+[Treesitter migration instructions](https://github.com/nvim-treesitter/nvim-treesitter/blob/main/README.md)
+and [LSP migration instructions](https://github.com/neovim/nvim-lspconfig#readme).
+Homebrew installs `tree-sitter-cli`; Linux installs the official CLI 0.26.12
+binary into `~/.local/bin`. The installer updates the three affected plugins,
+waits for parser installation, and checks normal Neovim startup before proceeding
+to tmux plugins. Lua startup errors stop installation even when Neovim returns 0.
+Plugin installation runs separately from user `after/plugin` configuration.
+
 tmux is pinned to **3.8**, the latest stable release checked on 2026-10-18.
 The installer downloads the release tarball from
 [tmux's GitHub releases](https://github.com/tmux/tmux/releases/tag/3.8), builds it
@@ -83,6 +94,19 @@ When Bash starts interactively, `.bashrc` switches to zsh if it is installed,
 regardless of the terminal type. This works without permission to use `chsh`
 and preserves login-shell mode. Non-interactive Bash scripts are unaffected.
 To stay in Bash for a session, run `NOZSH=1 bash`.
+
+Atuin is installed through Homebrew on macOS and from the latest official
+[prebuilt release](https://github.com/atuinsh/atuin/releases/latest) on Linux
+(x86_64/ARM64, installed into `~/.local/bin`). Both shells initialize it after
+fzf. The shared config is `~/.config/atuin/config.toml`, selected explicitly
+with `ATUIN_CONFIG_DIR` so both old and new Atuin releases use it.
+The up arrow opens history for the exact current directory; Ctrl+R opens all
+recorded history. Workspace filtering is disabled so Git directories follow
+the same rules. See [Atuin's key binding documentation](https://docs.atuin.sh/latest/configuration/key-binding/).
+Open a new terminal after installation to enable recording and the bindings.
+To bring existing shell history into Atuin, run `atuin import auto` once.
+Imported Bash/Zsh history has no directory information; directory filtering
+applies to commands recorded by Atuin after its shell integration is enabled.
 
 Ctags and language servers such as clangd, pyright, and rust-analyzer are installed
 separately. Telescope's search uses ripgrep, which the installer includes.

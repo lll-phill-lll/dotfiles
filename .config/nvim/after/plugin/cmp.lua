@@ -4,7 +4,7 @@ local cmp = require('cmp')
 cmp.setup({
     snippet = {
         expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body) -- For vsnip users.
+            vim.snippet.expand(args.body)
         end,
     },
     mapping = cmp.mapping.preset.insert({
@@ -15,7 +15,6 @@ cmp.setup({
         }),
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        { name = 'vsnip' }, -- For vsnip users.
     }, {
         { name = 'buffer' },
     })
@@ -36,5 +35,3 @@ cmp.setup({
 --         { name = 'cmdline' }
 --     })
 -- })
-
-local capabilities = require('cmp_nvim_lsp').default_capabilities()

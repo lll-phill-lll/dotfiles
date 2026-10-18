@@ -134,12 +134,18 @@ if ! shopt -oq posix; then
 fi
 
 
-[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
-if command -v atuin >/dev/null 2>&1; then
-    eval "$(atuin init bash)"
-fi
-
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 if [ -f "$HOME/.cargo/env" ]; then
     . "$HOME/.cargo/env"
+fi
+
+# Initialize after fzf so Atuin owns Ctrl+R and the up arrow.
+if [ -f "$HOME/.atuin/bin/env" ]; then
+    . "$HOME/.atuin/bin/env"
+fi
+if command -v atuin >/dev/null 2>&1; then
+    export ATUIN_CONFIG_DIR="$HOME/.config/atuin"
+    # Recent Atuin includes bash-preexec; reuse an existing copy when available.
+    [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+    eval "$(atuin init bash)"
 fi

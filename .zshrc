@@ -176,3 +176,12 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 ssh-add ~/.ssh/id_ed25519
+
+# Initialize after Oh My Zsh and fzf so Atuin owns Ctrl+R and the up arrow.
+if [ -f "$HOME/.atuin/bin/env" ]; then
+    source "$HOME/.atuin/bin/env"
+fi
+if command -v atuin >/dev/null 2>&1; then
+    export ATUIN_CONFIG_DIR="$HOME/.config/atuin"
+    eval "$(atuin init zsh)"
+fi

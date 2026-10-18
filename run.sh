@@ -61,8 +61,8 @@ case "$os" in
             require apt-get
             require sudo
             case "$(uname -m)" in
-                x86_64) nvim_arch=x86_64 ;;
-                aarch64|arm64) nvim_arch=arm64 ;;
+                x86_64) nvim_arch=x86_64; treesitter_arch=x64; atuin_arch=x86_64 ;;
+                aarch64|arm64) nvim_arch=arm64; treesitter_arch=arm64; atuin_arch=aarch64 ;;
                 *) die "Unsupported Linux architecture: $(uname -m)" ;;
             esac
         fi
@@ -186,7 +186,7 @@ fi
 printf 'Installing configs for %s from %s\n' "$os" "$repo_dir"
 if ! "$skip_packages"; then
     if [ "$os" = Darwin ]; then
-        run brew install neovim vim stow git curl zsh ripgrep clang-format atuin libevent ncurses utf8proc jemalloc pkgconf bison
+        run brew install neovim vim stow git curl zsh ripgrep clang-format atuin libevent ncurses utf8proc jemalloc pkgconf bison tree-sitter-cli
         run brew install --cask alacritty font-hack-nerd-font
     else
         run sudo apt-get update
@@ -197,6 +197,19 @@ if ! "$skip_packages"; then
         run sudo mkdir -p /opt/nvim-linux64
         run sudo tar -C /opt/nvim-linux64 --strip-components=1 -xzf "$temp_dir/nvim.tar.gz"
         export PATH="/opt/nvim-linux64/bin:$PATH"
+        # Ubuntu's packaged CLI may be too old for current nvim-treesitter.
+        run curl -fL --retry 3 -o "$temp_dir/tree-sitter.gz" \
+            "https://github.com/tree-sitter/tree-sitter/releases/download/v0.26.12/tree-sitter-linux-${treesitter_arch}.gz"
+        run gzip -d "$temp_dir/tree-sitter.gz"
+        run mkdir -p "$HOME/.local/bin"
+        run install -m 755 "$temp_dir/tree-sitter" "$HOME/.local/bin/tree-sitter"
+
+        # Use the official prebuilt binary; Ubuntu does not always package Atuin.
+        run curl -fL --retry 3 -o "$temp_dir/atuin.tar.gz" \
+            "https://github.com/atuinsh/atuin/releases/latest/download/atuin-${atuin_arch}-unknown-linux-musl.tar.gz"
+        run mkdir -p "$temp_dir/atuin"
+        run tar -C "$temp_dir/atuin" --strip-components=1 -xzf "$temp_dir/atuin.tar.gz"
+        run install -m 755 "$temp_dir/atuin/atuin" "$HOME/.local/bin/atuin"
     fi
 
     if [ -x "$tmux_prefix/bin/tmux" ] && [ "$("$tmux_prefix/bin/tmux" -V)" = "tmux $tmux_version" ]; then
@@ -252,7 +265,7 @@ else
     stow_configs
     # Stow can return success after skipping a target; verify the key links
     # before claiming that shell/editor configs are ready.
-    for config in .bashrc .bash_profile .zshrc .tmux.conf .config/nvim/init.lua; do
+    for config in .bashrc .bash_profile .zshrc .tmux.conf .config/nvim/init.lua .config/atuin/config.toml; do
         if [ "$HOME/$config" -ef "$repo_dir/$config" ]; then
             printf 'Config linked: %s\n' "$HOME/$config"
         else
@@ -281,14 +294,28 @@ if ! "$skip_plugins"; then
     # unavailable on a fresh install. Wait for installation before exiting.
     if ! "$dry_run"; then
         awk '{ print } /call plug#end\(\)/ { exit }' "$repo_dir/.vimrc" > "$temp_dir/vimrc"
-        printf 'lua dofile(vim.env.DOTFILES_DIR .. "/.config/nvim/lua/lll-phill-lll/vimplug.lua")\n' > "$temp_dir/init.vim"
+        cat > "$temp_dir/init.vim" <<'EOF'
+lua vim.opt.rtp:remove(vim.fn.stdpath('config') .. '/after')
+lua dofile(vim.env.DOTFILES_DIR .. '/.config/nvim/lua/lll-phill-lll/vimplug.lua')
+EOF
     fi
     export DOTFILES_DIR="$repo_dir"
     # vim-plug reports clone and hook errors in its buffer without a failing
     # process status. Propagate those errors to the installer as well.
-    plug_check='if search("^x ", "nw") | %print | cquit | endif'
+    plug_check='if search("^x ", "nw") || !empty(v:errmsg) | %print | echo v:errmsg | cquit | endif'
     run vim -N -u "$temp_dir/vimrc" -i NONE -n -es -c 'PlugInstall --sync' -c "$plug_check" -c 'qall'
-    run nvim --headless -u "$temp_dir/init.vim" -i NONE -n -c 'PlugInstall --sync' -c "$plug_check" -c 'qall'
+    # Update the plugins whose API/branch changed, then install the remaining
+    # plugins. Keep user after/plugin configs out of this bootstrap process.
+    run nvim --headless --noplugin -u "$temp_dir/init.vim" -i NONE -n \
+        -c 'PlugUpdate --sync nvim-treesitter nvim-treesitter-textobjects nvim-lspconfig' -c "$plug_check" \
+        -c 'PlugInstall --sync' -c "$plug_check" -c 'qall'
+    # Use a fresh process after switching branches so cached Lua modules from
+    # the previous plugin version cannot leak into parser installation.
+    run nvim --headless -u "$temp_dir/init.vim" -i NONE -n \
+        -c "lua require('lll-phill-lll.treesitter').install()" -c "$plug_check" -c 'qall'
+    # Lua startup errors may still return exit status 0: check v:errmsg too.
+    run nvim --headless -u "$HOME/.config/nvim/init.lua" -i NONE -n \
+        -c "$plug_check" -c 'qall'
 
     # Use a private server so installing TPM plugins works without a running
     # session and does not reload or change the user's existing tmux sessions.

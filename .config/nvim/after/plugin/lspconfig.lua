@@ -1,88 +1,54 @@
--- Setup language servers.
-local lspconfig = require('lspconfig')
+-- nvim-lspconfig supplies server definitions; Neovim 0.11+ configures them.
+vim.lsp.config('*', {
+    capabilities = require('cmp_nvim_lsp').default_capabilities(),
+})
 
-lspconfig.pyright.setup {}
-lspconfig.rust_analyzer.setup {
-  settings = {
-    ['rust-analyzer'] = {},
-  },
-}
-
-local opts = { noremap=true, silent=true }
-
-
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-    -- Enable completion triggered by <c-x><c-o>
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-    -- Mappings.
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 's', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'i', '<leader>s', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>qf', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>hh', '<cmd>ClangdSwitchSourceHeader<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'ge', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gE', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-end
-
-
-local lspconfig = require('lspconfig')
-
-local compile_commands_map = {
-    ["yql/essentials"] = "yql",
-    ["ydb/library/yql"] = "dq",
-    ["ydb/core/kqp"] = "kqp",
-}
-
-local function compile_commands_path_by_name(name)
-    return "/home/mfilitov/compile_commands/" .. name
-end
-
-local function get_compile_commands_dir(filename)
-    local path = vim.fn.expand(filename)
-
-    for prefix, compile_dir in pairs(compile_commands_map) do
-        if string.find(path, prefix, 1, true) then
-            return compile_commands_path_by_name(compile_dir)
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('DotfilesLsp', { clear = true }),
+    callback = function(event)
+        local bufnr = event.buf
+        vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
+        local function map(mode, key, action)
+            vim.keymap.set(mode, key, action, { buffer = bufnr, silent = true })
         end
-    end
-
-    return compile_commands_path_by_name("yql")
-end
-
-lspconfig.clangd.setup({
-    on_attach = on_attach,
-    on_new_config = function(new_config, new_root_dir)
-        local compile_commands_dir = get_compile_commands_dir(new_root_dir)
-        new_config.cmd = {
-            "clangd",
-            -- "/home/mfilitov/clangd-new/clangd_19.1.2/bin/clangd",
-            -- "--compile-commands-dir=" .. compile_commands_dir,
-            "--background-index",
-            "--pch-storage=memory",
-            "--all-scopes-completion",
-            "--pretty",
-            "--header-insertion=never",
-            "-j=64",
-            "--header-insertion-decorators",
-            "--function-arg-placeholders",
-            "--completion-style=detailed",
-        }
+        map('n', 'gD', vim.lsp.buf.declaration)
+        map('n', 'gd', vim.lsp.buf.definition)
+        map('n', 'K', vim.lsp.buf.hover)
+        map('n', 'gi', vim.lsp.buf.implementation)
+        map('n', 's', vim.lsp.buf.signature_help)
+        map('i', '<leader>s', vim.lsp.buf.signature_help)
+        map('n', '<leader>wa', vim.lsp.buf.add_workspace_folder)
+        map('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder)
+        map('n', '<leader>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end)
+        map('n', '<leader>D', vim.lsp.buf.type_definition)
+        map('n', '<leader>rn', vim.lsp.buf.rename)
+        map('n', '<leader>qf', vim.lsp.buf.code_action)
+        map('n', 'gr', vim.lsp.buf.references)
+        map('n', '<leader>f', function() vim.lsp.buf.format({ async = true }) end)
+        map('n', '<leader>e', vim.diagnostic.open_float)
+        map('n', 'ge', function() vim.diagnostic.jump({ count = 1, float = true }) end)
+        map('n', 'gE', function() vim.diagnostic.jump({ count = -1, float = true }) end)
+        map('n', '<leader>q', vim.diagnostic.setloclist)
+        local client = vim.lsp.get_client_by_id(event.data.client_id)
+        if client and client.name == 'clangd' then
+            map('n', '<leader>hh', '<cmd>LspClangdSwitchSourceHeader<CR>')
+        end
     end,
 })
 
+vim.lsp.config('rust_analyzer', { settings = { ['rust-analyzer'] = {} } })
+vim.lsp.config('clangd', {
+    cmd = {
+        'clangd',
+        '--background-index',
+        '--pch-storage=memory',
+        '--all-scopes-completion',
+        '--pretty',
+        '--header-insertion=never',
+        '-j=64',
+        '--header-insertion-decorators',
+        '--function-arg-placeholders',
+        '--completion-style=detailed',
+    },
+})
+vim.lsp.enable({ 'pyright', 'rust_analyzer', 'clangd' })

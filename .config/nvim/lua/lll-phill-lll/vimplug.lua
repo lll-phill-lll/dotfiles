@@ -13,7 +13,12 @@ Plug('ellisonleao/gruvbox.nvim')
 Plug('folke/tokyonight.nvim')
 
 -- Treesitter (better syntax highlighting)
-Plug('nvim-treesitter/nvim-treesitter', { ['do'] = ':TSUpdate' })
+-- The main branch uses Nvim 0.12's API; master supports Nvim 0.11.
+local treesitter_branch = vim.fn.has('nvim-0.12') == 1 and 'main' or 'master'
+Plug('nvim-treesitter/nvim-treesitter', {
+    ['branch'] = treesitter_branch,
+    ['do'] = function() require('lll-phill-lll.treesitter').install() end,
+})
 
 -- Show the tree of all changes. Persistent storage (undo also after nvim reload)
 Plug('mbbill/undotree')
@@ -25,7 +30,7 @@ Plug('neovim/nvim-lspconfig')
 Plug('nvim-treesitter/nvim-treesitter-context')
 
 -- Move across objects easely
-Plug('nvim-treesitter/nvim-treesitter-textobjects')
+Plug('nvim-treesitter/nvim-treesitter-textobjects', { ['branch'] = treesitter_branch })
 
 Plug('karb94/neoscroll.nvim')
 
