@@ -1,0 +1,13 @@
+# Ctrl+R searches all recorded history.
+filter_mode = "global"
+
+# Up searches commands recorded in the exact current directory.
+filter_mode_shell_up_key_binding = "directory"
+
+# Keep the directory filter even inside a Git repository.
+workspaces = false
+
+# Use a small inline history window for both Up and Ctrl+R.
+style = "compact"
+inline_height = 10
+show_preview = false
