@@ -10,6 +10,18 @@ case $- in
       *) return;;
 esac
 
+# Use zsh for interactive sessions even when chsh is unavailable.
+# Start an explicit Bash session with: NOZSH=1 bash
+if [ -z "${NOZSH:-}" ] && zsh_path=$(type -P zsh); then
+    export SHELL="$zsh_path"
+    if shopt -q login_shell; then
+        exec "$zsh_path" -l
+    else
+        exec "$zsh_path"
+    fi
+fi
+unset zsh_path
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -118,18 +130,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-
-if [ -z "${NOZSH:-}" ] && [[ ${TERM:-} == xterm || ${TERM:-} == xterm-256color || ${TERM:-} == screen ]] && command -v zsh &> /dev/null
-then
-    SHELL=$(command -v zsh)
-    export SHELL
-    if [[ -o login ]]
-    then
-        exec zsh -l
-    else
-        exec zsh
-    fi
-fi
 
 [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
 if command -v atuin >/dev/null 2>&1; then

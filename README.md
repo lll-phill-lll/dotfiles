@@ -60,6 +60,11 @@ The login shell and Dock settings change only when the corresponding flags are
 passed. Respect `XDG_DATA_HOME` for Neovim's vim-plug autoload file; the configs
 themselves live in `$HOME/.config`.
 
+When Bash starts interactively, `.bashrc` switches to zsh if it is installed,
+regardless of the terminal type. This works without permission to use `chsh`
+and preserves login-shell mode. Non-interactive Bash scripts are unaffected.
+To stay in Bash for a session, run `NOZSH=1 bash`.
+
 Ctags and language servers such as clangd, pyright, and rust-analyzer are installed
 separately. Telescope's search uses ripgrep, which the installer includes.
 Vim and tmux shortcuts are described in comments in their config files.
